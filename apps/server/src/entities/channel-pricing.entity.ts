@@ -22,10 +22,10 @@ export class ChannelPricing {
   @Column({ type: 'text', name: 'channel_name', enum: SalesChannel })
   channelName: SalesChannel;
 
-  @Column({ type: 'real', name: 'selling_price' })
+  @Column({ type: 'double precision', name: 'selling_price' })
   sellingPrice: number;
 
-  @Column({ type: 'real' })
+  @Column({ type: 'double precision' })
   margin: number;
 
   @ManyToOne(() => ProductVariant, (variant) => variant.pricings)
@@ -35,6 +35,6 @@ export class ChannelPricing {
   @Column({ type: 'integer', name: 'variant_id' })
   variantId: number;
 
-  @UpdateDateColumn({ type: 'datetime' })
+  @UpdateDateColumn({ type: 'timestamp' })
   updatedAt: Date;
 }

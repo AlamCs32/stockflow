@@ -1,5 +1,4 @@
 import 'reflect-metadata';
-import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { DataSource } from 'typeorm';
@@ -17,7 +16,11 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export const AppDataSource = new DataSource({
   type: config.database.type,
-  database: path.resolve(config.database.path),
+  host: config.database.host,
+  port: config.database.port,
+  username: config.database.username,
+  password: config.database.password,
+  database: config.database.database,
   entities: [Item, User, Category, Vendor, Design, ProductVariant, ChannelPricing, StockLog],
   migrations: [path.join(__dirname, 'migrations/*.{ts,js}')],
   synchronize: config.database.synchronize,
@@ -26,9 +29,6 @@ export const AppDataSource = new DataSource({
 });
 
 export async function initializeDatabase() {
-  const dbPath = path.resolve(config.database.path);
-  fs.mkdirSync(path.dirname(dbPath), { recursive: true });
-
   if (!AppDataSource.isInitialized) {
     await AppDataSource.initialize();
   }

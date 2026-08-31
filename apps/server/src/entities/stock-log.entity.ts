@@ -1,4 +1,11 @@
-import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { ProductVariant } from './product-variant.entity';
 
 export enum StockLogReason {
@@ -29,6 +36,6 @@ export class StockLog {
   @Column({ type: 'text', nullable: true })
   channel?: string | null;
 
-  @CreateDateColumn({ type: 'datetime' })
+  @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
 }

@@ -15,6 +15,6 @@ export class Vendor {
   @OneToMany(() => Design, (design) => design.vendor)
   designs: Design[];
 
-  @CreateDateColumn({ type: 'datetime' })
+  @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
 }

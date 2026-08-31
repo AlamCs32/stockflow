@@ -25,9 +25,9 @@ export class User {
   @OneToMany(() => Item, (item) => item.user)
   items: Item[];
 
-  @CreateDateColumn({ type: 'datetime' })
+  @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
 
-  @UpdateDateColumn({ type: 'datetime' })
+  @UpdateDateColumn({ type: 'timestamp' })
   updatedAt: Date;
 }

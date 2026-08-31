@@ -42,6 +42,6 @@ export class Design {
   @OneToMany(() => ProductVariant, (variant) => variant.design)
   variants: ProductVariant[];
 
-  @CreateDateColumn({ type: 'datetime' })
+  @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
 }

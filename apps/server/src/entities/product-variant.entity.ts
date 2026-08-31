@@ -1,11 +1,4 @@
-import {
-  Column,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  OneToMany,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Design } from './design.entity';
 import { ChannelPricing } from './channel-pricing.entity';
 import { StockLog } from './stock-log.entity';
@@ -32,7 +25,7 @@ export class ProductVariant {
   @Column({ type: 'text' })
   size: string;
 
-  @Column({ type: 'real', name: 'cost_price' })
+  @Column({ type: 'double precision', name: 'cost_price' })
   costPrice: number;
 
   @Column({ type: 'integer', name: 'stock_quantity', default: 0 })

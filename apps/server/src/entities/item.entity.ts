@@ -32,9 +32,9 @@ export class Item {
   @Column({ type: 'integer', name: 'category_id', nullable: true })
   categoryId?: number;
 
-  @CreateDateColumn({ type: 'datetime' })
+  @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
 
-  @UpdateDateColumn({ type: 'datetime' })
+  @UpdateDateColumn({ type: 'timestamp' })
   updatedAt: Date;
 }

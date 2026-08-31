@@ -19,6 +19,6 @@ export class Category {
   @OneToMany(() => Design, (design) => design.category)
   designs: Design[];
 
-  @CreateDateColumn({ type: 'datetime' })
+  @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
 }
