@@ -1,0 +1,27 @@
+{
+  "name": "stockflow",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "pnpm -r --parallel run dev",
+    "dev:server": "pnpm --filter @stockflow/server dev",
+    "dev:web": "pnpm --filter @stockflow/web dev",
+    "build": "pnpm -r run build",
+    "build:server": "pnpm --filter @stockflow/server build",
+    "build:web": "pnpm --filter @stockflow/web build",
+    "lint": "pnpm -r run lint",
+    "lint:fix": "pnpm -r run lint -- --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "typecheck": "pnpm -r run typecheck",
+    "typecheck:server": "pnpm --filter @stockflow/server typecheck",
+    "typecheck:web": "pnpm --filter @stockflow/web typecheck",
+    "clean": "pnpm -r run clean && rimraf node_modules"
+  },
+  "devDependencies": {
+    "prettier": "^3.9.6",
+    "rimraf": "^5.0.5",
+    "typescript": "^5.4.5"
+  }
+}

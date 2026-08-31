@@ -1,0 +1,16 @@
+node_modules
+dist
+build
+.next
+coverage
+*.log
+apps/server/logs
+*.tsbuildinfo
+.DS_Store
+.env
+.env.local
+.env.*.local
+apps/server/data
+
+# graphify generated knowledge-graph outputs
+graphify-out
