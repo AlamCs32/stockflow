@@ -1,25 +1,14 @@
 import { z } from 'zod';
 
 export const registerSchema = z.object({
-  tenantId: z.string().uuid().meta({ description: 'Tenant ID' }),
-  email: z.string().trim().email().meta({ description: 'User email' }),
-  password: z
-    .string()
-    .min(8)
-    .max(128)
-    .meta({ description: 'Password (min 8 characters)' }),
-  fullName: z
-    .string()
-    .trim()
-    .min(1)
-    .max(120)
-    .meta({ description: 'Full name' }),
+  email: z.email().trim().meta({ description: 'User email' }),
+  password: z.string().min(8).max(128).meta({ description: 'Password (min 8 characters)' }),
+  fullName: z.string().trim().min(1).max(120).meta({ description: 'Full name' }),
   phone: z.string().trim().optional().nullable().meta({ description: 'Phone number' }),
 });
 
 export const loginSchema = z.object({
-  tenantId: z.string().uuid().meta({ description: 'Tenant ID' }),
-  email: z.string().trim().email().meta({ description: 'User email' }),
+  email: z.email().trim().meta({ description: 'User email' }),
   password: z.string().min(1).meta({ description: 'Password' }),
 });
 
@@ -32,14 +21,8 @@ export const logoutSchema = z.object({
 });
 
 export const userResponseSchema = z.object({
-  id: z.string().uuid(),
-  tenantId: z.string().uuid(),
-  email: z.string(),
-  fullName: z.string(),
-  phone: z.string().nullable(),
+  id: z.uuid(),
   isActive: z.boolean(),
-  isEmailVerified: z.boolean(),
-  createdAt: z.coerce.date(),
 });
 
 export const authResponseSchema = z.object({

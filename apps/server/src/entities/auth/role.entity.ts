@@ -14,10 +14,7 @@ export class Role {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ type: 'uuid', name: 'tenant_id' })
-  tenantId: string;
-
-  @Column({ type: 'text' })
+  @Column({ type: 'text', unique: true })
   name: string;
 
   @Column({ type: 'boolean', name: 'is_active', default: true })

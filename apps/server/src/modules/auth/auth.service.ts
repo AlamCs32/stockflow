@@ -4,42 +4,42 @@ import { RefreshToken } from '@/entities/auth/refresh-token.entity';
 import { ConflictError, UnauthorizedError } from '@/shared/errors';
 import { hash, compare } from '@node-rs/bcrypt';
 import { config } from '@stockflow/config';
-import { randomBytes, createHash } from 'node:crypto';
-import type { FastifyInstance } from 'fastify';
+import { generateRefreshToken, hashToken, getRefreshTokenExpiry } from './auth.token';
+import { LoginInput, RefreshInput, RegisterInput } from './auth.schema';
 
 const userRepository = AppDataSource.getRepository(User);
 const refreshTokenRepository = AppDataSource.getRepository(RefreshToken);
 
-function sha256(input: string): string {
-  return createHash('sha256').update(input).digest('hex');
+export type SignToken = (payload: { sub: string; email: string }) => string;
+
+export interface AuthResult {
+  user: {
+    id: string;
+    isActive: boolean;
+  };
+  accessToken: string;
+  refreshToken: string;
 }
 
-function generateRefreshToken(): string {
-  return randomBytes(40).toString('hex');
+function toUserResponse(user: User): AuthResult['user'] {
+  return {
+    id: user.id,
+    isActive: user.isActive,
+  };
 }
 
-export async function register(
-  app: FastifyInstance,
-  input: {
-    tenantId: string;
-    email: string;
-    password: string;
-    fullName: string;
-    phone?: string | null;
-  }
-): Promise<{ user: User; accessToken: string; refreshToken: string }> {
+export async function register(input: RegisterInput, signToken: SignToken): Promise<AuthResult> {
   const existing = await userRepository.findOne({
-    where: { tenantId: input.tenantId, email: input.email },
+    where: { email: input.email },
   });
   if (existing) {
-    throw new ConflictError('User with this email already exists in this tenant');
+    throw new ConflictError('User with this email already exists');
   }
 
   const passwordHash = await hash(input.password, config.auth.bcryptRounds);
 
   const user = await userRepository.save(
     userRepository.create({
-      tenantId: input.tenantId,
       email: input.email,
       passwordHash,
       fullName: input.fullName,
@@ -47,25 +47,15 @@ export async function register(
     })
   );
 
-  const accessToken = app.jwt.sign(
-    { sub: user.id, tenantId: user.tenantId, email: user.email },
-    { expiresIn: config.auth.accessTokenTtl }
-  );
+  const accessToken = signToken({ sub: user.id, email: user.email });
   const refreshToken = await createRefreshToken(user.id);
 
-  return { user, accessToken, refreshToken };
+  return { user: toUserResponse(user), accessToken, refreshToken };
 }
 
-export async function login(
-  app: FastifyInstance,
-  input: {
-    tenantId: string;
-    email: string;
-    password: string;
-  }
-): Promise<{ user: User; accessToken: string; refreshToken: string }> {
+export async function login(input: LoginInput, signToken: SignToken): Promise<AuthResult> {
   const user = await userRepository.findOne({
-    where: { tenantId: input.tenantId, email: input.email },
+    where: { email: input.email },
   });
   if (!user) {
     throw new UnauthorizedError('Invalid email or password');
@@ -83,20 +73,14 @@ export async function login(
   user.lastLoginAt = new Date();
   await userRepository.save(user);
 
-  const accessToken = app.jwt.sign(
-    { sub: user.id, tenantId: user.tenantId, email: user.email },
-    { expiresIn: config.auth.accessTokenTtl }
-  );
+  const accessToken = signToken({ sub: user.id, email: user.email });
   const refreshToken = await createRefreshToken(user.id);
 
-  return { user, accessToken, refreshToken };
+  return { user: toUserResponse(user), accessToken, refreshToken };
 }
 
-export async function refresh(
-  app: FastifyInstance,
-  token: string
-): Promise<{ user: User; accessToken: string; refreshToken: string }> {
-  const tokenHash = sha256(token);
+export async function refresh(input: RefreshInput, signToken: SignToken): Promise<AuthResult> {
+  const tokenHash = hashToken(input.refreshToken);
   const existing = await refreshTokenRepository.findOne({
     where: { tokenHash },
     relations: { user: true },
@@ -118,17 +102,14 @@ export async function refresh(
   existing.revokedAt = new Date();
   await refreshTokenRepository.save(existing);
 
-  const accessToken = app.jwt.sign(
-    { sub: user.id, tenantId: user.tenantId, email: user.email },
-    { expiresIn: config.auth.accessTokenTtl }
-  );
+  const accessToken = signToken({ sub: user.id, email: user.email });
   const refreshToken = await createRefreshToken(user.id);
 
-  return { user, accessToken, refreshToken };
+  return { user: toUserResponse(user), accessToken, refreshToken };
 }
 
 export async function logout(token: string): Promise<void> {
-  const tokenHash = sha256(token);
+  const tokenHash = hashToken(token);
   const existing = await refreshTokenRepository.findOne({ where: { tokenHash } });
   if (existing && !existing.revokedAt) {
     existing.revokedAt = new Date();
@@ -155,10 +136,8 @@ export async function getUserWithRoles(userId: string) {
 
 async function createRefreshToken(userId: string): Promise<string> {
   const raw = generateRefreshToken();
-  const tokenHash = sha256(raw);
-
-  const expiresAt = new Date();
-  expiresAt.setDate(expiresAt.getDate() + config.auth.refreshTokenTtlDays);
+  const tokenHash = hashToken(raw);
+  const expiresAt = getRefreshTokenExpiry();
 
   await refreshTokenRepository.save(
     refreshTokenRepository.create({

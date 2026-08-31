@@ -4,7 +4,6 @@ import type { FastifyRequest, FastifyReply } from 'fastify';
 
 export interface AuthUser {
   id: string;
-  tenantId: string;
   email: string;
 }
 
@@ -27,9 +26,8 @@ export async function authenticate(req: FastifyRequest, _reply: FastifyReply): P
     const token = req.headers.authorization?.replace('Bearer ', '') ?? '';
     const decoded = req.server.jwt.verify<{
       sub: string;
-      tenantId: string;
       email: string;
-    }>(token) as { sub: string; tenantId: string; email: string };
+    }>(token) as { sub: string; email: string };
 
     const userWithRoles = await getUserWithRoles(decoded.sub);
     if (!userWithRoles) {
@@ -47,7 +45,12 @@ export async function authenticate(req: FastifyRequest, _reply: FastifyReply): P
         if (!rp.module?.isActive) continue;
         const key = rp.module.key;
         if (!permissions[key]) {
-          permissions[key] = { canRead: false, canWrite: false, canUpdate: false, canDelete: false };
+          permissions[key] = {
+            canRead: false,
+            canWrite: false,
+            canUpdate: false,
+            canDelete: false,
+          };
         }
         permissions[key].canRead = permissions[key].canRead || rp.canRead;
         permissions[key].canWrite = permissions[key].canWrite || rp.canWrite;
@@ -59,7 +62,6 @@ export async function authenticate(req: FastifyRequest, _reply: FastifyReply): P
     req.auth = {
       user: {
         id: decoded.sub,
-        tenantId: decoded.tenantId,
         email: decoded.email,
       },
       permissions,

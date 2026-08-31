@@ -4,6 +4,17 @@ export class CreateAuthTables1785700000000 implements MigrationInterface {
   name = 'CreateAuthTables1785700000000';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
+    const hasUsersTable = await queryRunner.query(
+      `SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'users')`
+    );
+    if (hasUsersTable[0]?.exists) {
+      await queryRunner.query(
+        `ALTER TABLE "items" DROP CONSTRAINT IF EXISTS "FK_3b934e62fb52bac909e0ddf5422"`
+      );
+      await queryRunner.query(`DROP TABLE "users" CASCADE`);
+      await queryRunner.query(`DROP TABLE "items"`);
+    }
+
     await queryRunner.query(
       `CREATE TABLE "users" ("id" uuid NOT NULL DEFAULT gen_random_uuid(), "tenant_id" uuid NOT NULL, "email" text NOT NULL, "password_hash" text NOT NULL, "full_name" text NOT NULL, "phone" text, "is_active" boolean NOT NULL DEFAULT true, "is_email_verified" boolean NOT NULL DEFAULT false, "last_login_at" TIMESTAMP WITH TIME ZONE, "created_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updated_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), CONSTRAINT "UQ_users_tenant_email" UNIQUE ("tenant_id", "email"), CONSTRAINT "PK_users" PRIMARY KEY ("id"))`
     );

@@ -31,12 +31,9 @@ async function seed() {
   const userRoleRepo = AppDataSource.getRepository(UserRole);
   const rolePermissionRepo = AppDataSource.getRepository(RolePermission);
 
-  const tenantId = '00000000-0000-0000-0000-000000000001';
-
   const passwordHash = await hash('password123', 12);
   const user = await userRepo.save(
     userRepo.create({
-      tenantId,
       email: 'admin@example.com',
       passwordHash,
       fullName: 'Admin',
@@ -50,13 +47,9 @@ async function seed() {
     moduleRepo.create({ key: 'orders', name: 'Orders' }),
   ]);
 
-  const adminRole = await roleRepo.save(
-    roleRepo.create({ tenantId, name: 'Admin' })
-  );
+  const adminRole = await roleRepo.save(roleRepo.create({ name: 'Admin' }));
 
-  await userRoleRepo.save(
-    userRoleRepo.create({ userId: user.id, roleId: adminRole.id })
-  );
+  await userRoleRepo.save(userRoleRepo.create({ userId: user.id, roleId: adminRole.id }));
 
   for (const mod of modules) {
     await rolePermissionRepo.save(
