@@ -21,7 +21,7 @@ export interface InventoryItem {
     designCode: string;
     patternCode: string;
     name: string;
-    vendor: { id: string; name: string } | null;
+    supplier: { id: string; name: string } | null;
     category: { id: number; name: string; code: string } | null;
   };
   pricings: Array<{
@@ -48,7 +48,7 @@ export async function listInventory(query: InventoryQuery): Promise<InventoryIte
       ...(query.status ? { status: query.status } : {}),
       ...(query.designId ? { designId: query.designId } : {}),
     },
-    relations: { design: { vendor: true, category: true }, pricings: true },
+    relations: { design: { supplier: true, category: true }, pricings: true },
     order: { id: 'ASC' },
   });
 
@@ -74,8 +74,8 @@ export async function listInventory(query: InventoryQuery): Promise<InventoryIte
         designCode: variant.design?.designCode ?? '',
         patternCode: variant.design?.patternCode ?? '',
         name: variant.design?.name ?? '',
-        vendor: variant.design?.vendor
-          ? { id: variant.design.vendor.id, name: variant.design.vendor.name }
+        supplier: variant.design?.supplier
+          ? { id: variant.design.supplier.id, name: variant.design.supplier.name }
           : null,
         category: variant.design?.category
           ? {

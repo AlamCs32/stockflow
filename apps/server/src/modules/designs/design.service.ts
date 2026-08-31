@@ -1,22 +1,22 @@
 import { AppDataSource } from '@/database/data-source';
 import { Design } from '@/entities/design.entity';
-import { Vendor } from '@/entities/vendor.entity';
+import { Supplier } from '@/entities/supplier.entity';
 import { ConflictError, NotFoundError } from '@/shared/errors';
 import { findCategoryById, findDesignByCode } from '@/repositories/design.repository';
 
 const designRepository = AppDataSource.getRepository(Design);
-const vendorRepository = AppDataSource.getRepository(Vendor);
+const supplierRepository = AppDataSource.getRepository(Supplier);
 
 export async function createDesign(input: {
   designCode: string;
   patternCode: string;
   name: string;
-  vendorId: string;
+  supplierId: string;
   categoryId: number;
 }): Promise<Design> {
-  const vendor = await vendorRepository.findOne({ where: { id: input.vendorId } });
-  if (!vendor) {
-    throw new NotFoundError(`Vendor ${input.vendorId}`);
+  const supplier = await supplierRepository.findOne({ where: { id: input.supplierId } });
+  if (!supplier) {
+    throw new NotFoundError(`Supplier ${input.supplierId}`);
   }
 
   const category = await findCategoryById(input.categoryId);
@@ -32,7 +32,7 @@ export async function createDesign(input: {
     designCode: input.designCode,
     patternCode: input.patternCode,
     name: input.name,
-    vendorId: vendor.id,
+    supplierId: supplier.id,
     categoryId: category.id,
   });
   return designRepository.save(design);

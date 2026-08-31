@@ -17,17 +17,17 @@ const channelPricingRepository = AppDataSource.getRepository(ChannelPricing);
 export async function createVariant(input: CreateVariantInput): Promise<ProductVariant> {
   const design = await designRepository.findOne({
     where: { id: input.designId },
-    relations: { vendor: true, category: true },
+    relations: { supplier: true, category: true },
   });
   if (!design) {
     throw new NotFoundError('Design');
   }
-  if (!design.vendor || !design.category) {
-    throw new NotFoundError('Design vendor or category');
+  if (!design.supplier || !design.category) {
+    throw new NotFoundError('Design supplier or category');
   }
 
   const sku = buildSku({
-    vendorId: design.vendorId,
+    supplierId: design.supplierId,
     categoryCode: design.category.code,
     designCode: design.designCode,
     costPrice: input.costPrice,

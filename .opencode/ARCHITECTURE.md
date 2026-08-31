@@ -34,7 +34,7 @@ apps/server/src/
 ├── routes/index.ts       # Registers all module route plugins
 ├── modules/<name>/       # One directory per resource (see Module pattern)
 ├── services/             # Cross-module domain services
-│   ├── sku.service.ts    # SKU builder (VENDOR-CATEGORY-DESIGN-COST-COLOR-SIZE)
+│   ├── sku.service.ts    # SKU builder (SUPPLIER-CATEGORY-DESIGN-COST-COLOR-SIZE)
 │   ├── pricing.service.ts# Margin calculator (sellingPrice - costPrice)
 │   └── stock.service.ts  # Stock adjustment with business rules + transaction
 ├── repositories/         # TypeORM repository helpers + finder functions
@@ -69,7 +69,7 @@ All modules are registered in order in `apps/server/src/routes/index.ts`:
 1. `healthRoutes` → `GET /health`
 2. `itemRoutes` → `GET /api/items`
 3. `uploadRoutes` → `POST /api/upload`
-4. `vendorRoutes` → `POST /api/vendors`
+4. `supplierRoutes` → `POST /api/suppliers`, `GET /api/suppliers`, `GET /api/suppliers/:id`, `PATCH /api/suppliers/:id`, `DELETE /api/suppliers/:id`
 5. `designRoutes` → `POST /api/designs`
 6. `variantRoutes` → `POST /api/variants`, `GET /api/variants/:id`, `POST /api/variants/:id/pricing`, `PATCH /api/variants/:id/stock`
 7. `inventoryRoutes` → `GET /api/inventory`
@@ -95,7 +95,7 @@ HTTP Request
 ## Domain model
 
 ```
-Vendor (V001 text PK) ─┐
+Supplier (uuid PK, code S001) ─┐
                        ├──→ Design (designCode D001, patternCode) ──→ ProductVariant (SKU) ──→ ChannelPricing (per sales channel)
 Category (code ELE/KRT)─┘                                                  │
                                                                            └→ StockLog (INWARD/SALE/RETURN/ADJUSTMENT)
@@ -103,7 +103,7 @@ Item (legacy, User → Item → Category)
 User (admin@example.com seeded, plaintext password — no auth)
 ```
 
-- **SKU format**: `VENDOR-CATEGORY-DESIGN-COST-COLOR-SIZE` (e.g., `V001-KRT-D001-130-BLK-XL`)
+- **SKU format**: `SUPPLIER-CATEGORY-DESIGN-COST-COLOR-SIZE` (e.g., `S001-KRT-D001-130-BLK-XL`)
 - **Margin**: `sellingPrice - costPrice`, rounded to 2 decimals
 - **Stock status**: `OUT_OF_STOCK` (≤0), `LOW_STOCK` (≤5 threshold), `IN_STOCK` (>5)
 - **SalesChannel**: `MEESHO`, `FLIPKART`, `AMAZON`
@@ -117,8 +117,8 @@ POST /api/variants
   → createVariantSchema validates input
   → postVariantHandler
     → createVariant(input)
-      → Find Design (with vendor + category relations)
-      → buildSku() → VENDOR-CATEGORY-DESIGN-COST-COLOR-SIZE
+      → Find Design (with supplier + category relations)
+      → buildSku() → SUPPLIER-CATEGORY-DESIGN-COST-COLOR-SIZE
       → Check SKU uniqueness (ConflictError if exists)
       → AppDataSource.transaction(manager)
         → manager.save(ProductVariant, { sku, ..., designId, stockQuantity: initialStock })

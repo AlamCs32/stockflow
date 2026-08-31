@@ -1,13 +1,20 @@
 import Fastify from 'fastify';
+import jwt from '@fastify/jwt';
 import { ZodError } from 'zod';
 import { serializerCompiler, validatorCompiler } from 'fastify-type-provider-zod';
 import registerPlugins from '@/plugins/index';
 import registerRoutes from '@/routes/index';
 import { buildLoggerConfig, genRequestId } from '@/configs/logger';
 import { AppError } from '@/shared/errors';
+import { config } from '@stockflow/config';
 
 export default async function buildApp() {
   const app = Fastify({ logger: buildLoggerConfig(), genReqId: genRequestId });
+
+  await app.register(jwt, {
+    secret: config.auth.jwtAccessSecret,
+    sign: { expiresIn: config.auth.accessTokenTtl },
+  });
 
   app.setValidatorCompiler(validatorCompiler);
   app.setSerializerCompiler(serializerCompiler);

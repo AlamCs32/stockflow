@@ -34,7 +34,7 @@ export const inventoryItemSchema = z.object({
     designCode: z.string(),
     patternCode: z.string(),
     name: z.string(),
-    vendor: z.object({ id: z.string(), name: z.string() }).nullable(),
+    supplier: z.object({ id: z.string(), name: z.string() }).nullable(),
     category: z.object({ id: z.number(), name: z.string(), code: z.string() }).nullable(),
   }),
   pricings: z.array(

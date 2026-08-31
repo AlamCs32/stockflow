@@ -56,16 +56,16 @@ Exceptions (documented in ARCHITECTURE.md): `health/` uses `.types.ts`, `items/`
 
 #### Classes / functions / handlers (PascalCase)
 
-- Entity classes: `ProductVariant`, `ChannelPricing`, `StockLog`, `Design`, `Category`, `Vendor`, `Item`, `User`
+- Entity classes: `ProductVariant`, `ChannelPricing`, `StockLog`, `Design`, `Category`, `Supplier`, `Item`, `User`
 - Enum values: `MEESHO`, `FLIPKART`, `AMAZON`, `INWARD`, `SALE`, `RETURN`, `ADJUSTMENT`, `ACTIVE`, `INACTIVE`
-- Route handler functions: `postDesignHandler`, `getVariantHandler`, `patchStockHandler`, `postPricingHandler`, `postVendorHandler`, `getItemsHandler`, `getInventoryHandler`, `uploadFileHandler`, `getHealthHandler`
-- Service functions: `createVariant`, `upsertPricing`, `adjustStock`, `getVariantOrThrow`, `createDesign`, `createVendor`, `listItems`, `listInventory`
+- Route handler functions: `postDesignHandler`, `getVariantHandler`, `patchStockHandler`, `postPricingHandler`, `postSupplierHandler`, `listSuppliersHandler`, `getSupplierHandler`, `updateSupplierHandler`, `deleteSupplierHandler`, `getItemsHandler`, `getInventoryHandler`, `uploadFileHandler`, `getHealthHandler`
+- Service functions: `createVariant`, `upsertPricing`, `adjustStock`, `getVariantOrThrow`, `createDesign`, `createSupplier`, `listSuppliers`, `getSupplierOrThrow`, `updateSupplier`, `deleteSupplier`, `listItems`, `listInventory`
 - Repository functions: `findCategoryById`, `findDesignByCode`, `findAllItems`, `findVariantById`, `findVariantBySku`, `findPricing`
 - Schema exports: `createDesignSchema`, `designResponseSchema`, `createDesignResponseSchema`, `variantIdParamSchema`, `upsertPricingSchema`, `adjustStockSchema`, `inventoryQuerySchema`, `inventoryResponseSchema`
 
 #### Types (PascalCase, inferred from Zod)
 
-- `CreateDesignInput`, `VariantIdParam`, `UpsertPricingInput`, `AdjustStockInput`, `CreateVariantInput`, `CreateVendorInput`, `InventoryQuery`
+- `CreateDesignInput`, `VariantIdParam`, `UpsertPricingInput`, `AdjustStockInput`, `CreateVariantInput`, `CreateSupplierInput`, `UpdateSupplierInput`, `SupplierIdParam`, `InventoryQuery`
 - `StockAdjustment` interface in `stock.service.ts`
 - `SkuComponents` interface in `sku.service.ts`
 - `InventoryItem`, `StockStatus` in `inventory.service.ts`
@@ -97,7 +97,7 @@ Exceptions (documented in ARCHITECTURE.md): `health/` uses `.types.ts`, `items/`
 ## Response shape conventions
 
 - Lists: `{ items: T[], count: number }` (inventory) or `{ items: T[] }` (items).
-- Singletons: `{ variant }`, `{ design }`, `{ vendor }`, `{ pricing }`, `{ log }`.
+- Singletons: `{ variant }`, `{ design }`, `{ supplier }`, `{ pricing }`, `{ log }`.
 - Combined: `{ variant, stockLog }`, `{ variant, pricings }`.
 
 ## Config conventions (`@stockflow/config`)
@@ -125,7 +125,7 @@ Exceptions (documented in ARCHITECTURE.md): `health/` uses `.types.ts`, `items/`
 - Class: PascalCase matching entity name (e.g., `ProductVariant`).
 - `@Entity('snake_case_table_name')` explicit table name.
 - `@PrimaryGeneratedColumn()` for auto-increment integer PK.
-- `@PrimaryColumn()` for string PK (e.g., `Vendor.id`).
+- `@PrimaryGeneratedColumn('uuid')` for UUID PK (e.g., `Supplier.id`).
 - `@Column({ type: 'text', name: 'snake_case' })` for every property.
 - `@ManyToOne`, `@OneToMany`, `@JoinColumn({ name: 'fk_id' })` for relations.
 - Enums in-file as `export enum <Name> { ... }`.

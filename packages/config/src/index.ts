@@ -28,11 +28,18 @@ export const config = {
   inventory: {
     lowStockThreshold: Number(process.env.INVENTORY_LOW_STOCK_THRESHOLD ?? 5),
   },
+  auth: {
+    jwtAccessSecret: process.env.JWT_ACCESS_SECRET ?? 'dev-access-secret-change-in-production',
+    jwtRefreshSecret: process.env.JWT_REFRESH_SECRET ?? 'dev-refresh-secret-change-in-production',
+    accessTokenTtl: process.env.ACCESS_TOKEN_TTL ?? '15m',
+    refreshTokenTtlDays: Number(process.env.REFRESH_TOKEN_TTL_DAYS ?? 30),
+    bcryptRounds: Number(process.env.BCRYPT_ROUNDS ?? 12),
+  },
   swagger: {
     enabled: process.env.SWAGGER_ENABLED !== 'false',
     title: 'My Inventory API',
     description:
-      'Multi-channel e-commerce inventory management API for vendors, designs, product variants, channel pricing, and stock control.',
+      'Multi-channel e-commerce inventory management API for suppliers, designs, product variants, channel pricing, and stock control.',
     version: '1.0.0',
     routePrefix: process.env.SWAGGER_ROUTE_PREFIX ?? '/docs',
   },

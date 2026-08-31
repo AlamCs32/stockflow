@@ -14,7 +14,7 @@ export async function findDesignByCode(designCode: string): Promise<Design | nul
 }
 
 export async function createDesign(
-  data: Pick<Design, 'designCode' | 'patternCode' | 'name' | 'vendorId' | 'categoryId'>
+  data: Pick<Design, 'designCode' | 'patternCode' | 'name' | 'supplierId' | 'categoryId'>
 ): Promise<Design> {
   const design = designRepository.create(data);
   return designRepository.save(design);

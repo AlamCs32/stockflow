@@ -7,7 +7,7 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Vendor } from './vendor.entity';
+import { Supplier } from './supplier.entity';
 import { Category } from './category.entity';
 import { ProductVariant } from './product-variant.entity';
 
@@ -25,12 +25,12 @@ export class Design {
   @Column({ type: 'text' })
   name: string;
 
-  @ManyToOne(() => Vendor, (vendor) => vendor.designs)
-  @JoinColumn({ name: 'vendor_id' })
-  vendor?: Vendor;
+  @ManyToOne(() => Supplier, (supplier) => supplier.designs)
+  @JoinColumn({ name: 'supplier_id' })
+  supplier?: Supplier;
 
-  @Column({ type: 'text', name: 'vendor_id' })
-  vendorId: string;
+  @Column({ type: 'uuid', name: 'supplier_id' })
+  supplierId: string;
 
   @ManyToOne(() => Category, (category) => category.designs)
   @JoinColumn({ name: 'category_id' })

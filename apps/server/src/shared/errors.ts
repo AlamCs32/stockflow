@@ -22,6 +22,18 @@ export class ConflictError extends AppError {
   }
 }
 
+export class UnauthorizedError extends AppError {
+  constructor(message: string) {
+    super(401, message);
+  }
+}
+
+export class ForbiddenError extends AppError {
+  constructor(message: string) {
+    super(403, message);
+  }
+}
+
 export class BusinessRuleError extends AppError {
   constructor(message: string, details?: unknown) {
     super(422, message, details);

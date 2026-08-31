@@ -19,11 +19,11 @@ export const createDesignSchema = z.object({
     .min(1)
     .max(160)
     .meta({ examples: ['Floral Print Anarkali Kurti'] }),
-  vendorId: z
+  supplierId: z
     .string()
     .trim()
     .min(1)
-    .meta({ description: 'Existing vendor identifier', examples: ['V001'] }),
+    .meta({ description: 'Existing supplier identifier', examples: ['S001'] }),
   categoryId: z.coerce
     .number()
     .int()
@@ -36,7 +36,7 @@ export const designResponseSchema = z.object({
   designCode: z.string(),
   patternCode: z.string(),
   name: z.string(),
-  vendorId: z.string(),
+  supplierId: z.string(),
   categoryId: z.number(),
   createdAt: z.coerce.date(),
 });

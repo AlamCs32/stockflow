@@ -119,11 +119,9 @@ export const channelPricingResponseSchema = z.object({
   id: z.number(),
   channelName: z.enum(SalesChannel),
   sellingPrice: z.number(),
-  margin: z
-    .number()
-    .meta({
-      description: 'sellingPrice - variant.costPrice, auto-calculated on create and update',
-    }),
+  margin: z.number().meta({
+    description: 'sellingPrice - variant.costPrice, auto-calculated on create and update',
+  }),
   variantId: z.number(),
   updatedAt: z.coerce.date(),
 });

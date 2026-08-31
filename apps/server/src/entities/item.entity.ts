@@ -22,8 +22,8 @@ export class Item {
   @JoinColumn({ name: 'user_id' })
   user?: User;
 
-  @Column({ type: 'integer', name: 'user_id', nullable: true })
-  userId?: number;
+  @Column({ type: 'uuid', name: 'user_id', nullable: true })
+  userId?: string;
 
   @ManyToOne(() => Category, (category) => category.items, { nullable: true })
   @JoinColumn({ name: 'category_id' })

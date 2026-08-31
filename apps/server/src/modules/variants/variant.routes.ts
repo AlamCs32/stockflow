@@ -24,7 +24,7 @@ export default async function variantRoutes(app: FastifyInstance) {
         tags: ['Variants'],
         summary: 'Create a product variant (SKU)',
         description:
-          'Generates the SKU as VENDOR-CATEGORY-DESIGN-COST-COLOR-SIZE (e.g. V001-KRT-D001-130-BLK-XL) and records the initial stock as an INWARD stock log inside a database transaction.',
+          'Generates the SKU as SUPPLIER-CATEGORY-DESIGN-COST-COLOR-SIZE (e.g. S001-KRT-D001-130-BLK-XL) and records the initial stock as an INWARD stock log inside a database transaction.',
         body: createVariantSchema,
         response: { 201: createVariantResponseSchema },
       },

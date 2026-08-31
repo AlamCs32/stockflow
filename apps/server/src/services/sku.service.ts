@@ -1,5 +1,5 @@
 export interface SkuComponents {
-  vendorId: string;
+  supplierId: string;
   categoryCode: string;
   designCode: string;
   costPrice: number;
@@ -13,14 +13,14 @@ function formatPriceSegment(costPrice: number): string {
 }
 
 export function buildSku({
-  vendorId,
+  supplierId,
   categoryCode,
   designCode,
   costPrice,
   colorCode,
   size,
 }: SkuComponents): string {
-  return [vendorId, categoryCode, designCode, formatPriceSegment(costPrice), colorCode, size]
+  return [supplierId, categoryCode, designCode, formatPriceSegment(costPrice), colorCode, size]
     .map((segment) => segment.trim().toUpperCase())
     .join('-');
 }
