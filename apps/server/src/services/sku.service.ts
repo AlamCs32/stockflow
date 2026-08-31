@@ -12,7 +12,14 @@ function formatPriceSegment(costPrice: number): string {
   return Number.isInteger(rounded) ? String(rounded) : String(rounded);
 }
 
-export function buildSku({ vendorId, categoryCode, designCode, costPrice, colorCode, size }: SkuComponents): string {
+export function buildSku({
+  vendorId,
+  categoryCode,
+  designCode,
+  costPrice,
+  colorCode,
+  size,
+}: SkuComponents): string {
   return [vendorId, categoryCode, designCode, formatPriceSegment(costPrice), colorCode, size]
     .map((segment) => segment.trim().toUpperCase())
     .join('-');

@@ -1,10 +1,5 @@
 import type { FastifyReply, FastifyRequest } from 'fastify';
-import {
-  adjustStock,
-  createVariant,
-  getVariantOrThrow,
-  upsertPricing,
-} from './variant.service';
+import { adjustStock, createVariant, getVariantOrThrow, upsertPricing } from './variant.service';
 import type {
   AdjustStockInput,
   CreateVariantInput,

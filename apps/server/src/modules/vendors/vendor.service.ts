@@ -16,7 +16,11 @@ async function generateVendorId(): Promise<string> {
   }
 }
 
-export async function createVendor(input: { id?: string; name: string; contactEmail: string }): Promise<Vendor> {
+export async function createVendor(input: {
+  id?: string;
+  name: string;
+  contactEmail: string;
+}): Promise<Vendor> {
   const id = input.id ?? (await generateVendorId());
 
   const existing = await vendorRepository.findOne({
@@ -24,10 +28,16 @@ export async function createVendor(input: { id?: string; name: string; contactEm
   });
   if (existing) {
     throw new ConflictError(
-      existing.id === id ? `Vendor ${id} already exists` : `Vendor with email ${input.contactEmail} already exists`
+      existing.id === id
+        ? `Vendor ${id} already exists`
+        : `Vendor with email ${input.contactEmail} already exists`
     );
   }
 
-  const vendor = vendorRepository.create({ id, name: input.name, contactEmail: input.contactEmail });
+  const vendor = vendorRepository.create({
+    id,
+    name: input.name,
+    contactEmail: input.contactEmail,
+  });
   return vendorRepository.save(vendor);
 }

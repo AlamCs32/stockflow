@@ -7,10 +7,28 @@ export const createDesignSchema = z.object({
     .regex(/^[A-Za-z]\d{2,}$/, 'Design code must match pattern D001')
     .transform((value) => value.toUpperCase())
     .meta({ description: 'Unique design code (uppercased automatically)', examples: ['D001'] }),
-  patternCode: z.string().trim().min(1).max(32).meta({ description: 'Internal pattern reference', examples: ['PAT-BLK-FLR'] }),
-  name: z.string().trim().min(1).max(160).meta({ examples: ['Floral Print Anarkali Kurti'] }),
-  vendorId: z.string().trim().min(1).meta({ description: 'Existing vendor identifier', examples: ['V001'] }),
-  categoryId: z.coerce.number().int().positive().meta({ description: 'Existing category id', examples: [3] }),
+  patternCode: z
+    .string()
+    .trim()
+    .min(1)
+    .max(32)
+    .meta({ description: 'Internal pattern reference', examples: ['PAT-BLK-FLR'] }),
+  name: z
+    .string()
+    .trim()
+    .min(1)
+    .max(160)
+    .meta({ examples: ['Floral Print Anarkali Kurti'] }),
+  vendorId: z
+    .string()
+    .trim()
+    .min(1)
+    .meta({ description: 'Existing vendor identifier', examples: ['V001'] }),
+  categoryId: z.coerce
+    .number()
+    .int()
+    .positive()
+    .meta({ description: 'Existing category id', examples: [3] }),
 });
 
 export const designResponseSchema = z.object({

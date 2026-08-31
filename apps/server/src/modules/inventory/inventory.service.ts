@@ -54,7 +54,9 @@ export async function listInventory(query: InventoryQuery): Promise<InventoryIte
 
   return variants
     .filter((variant) =>
-      query.channel ? variant.pricings.some((pricing) => pricing.channelName === query.channel) : true
+      query.channel
+        ? variant.pricings.some((pricing) => pricing.channelName === query.channel)
+        : true
     )
     .map((variant) => ({
       id: variant.id,

@@ -61,7 +61,10 @@ function deriveOperationId(method: string, url: string): string {
  * - a deterministic operationId
  * - standard 400/404/500 error responses (explicit route responses win)
  */
-export function autoSwaggerTransform(params: AutoTransformParams): { schema: FastifySchema; url: string } {
+export function autoSwaggerTransform(params: AutoTransformParams): {
+  schema: FastifySchema;
+  url: string;
+} {
   const explicit = params.schema ?? {};
   const method = Array.isArray(params.route.method) ? params.route.method[0] : params.route.method;
 

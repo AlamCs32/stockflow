@@ -26,8 +26,12 @@ async function seed() {
     userRepo.create({ email: 'admin@example.com', password: 'password123', name: 'Admin' })
   );
 
-  const electronics = await categoryRepo.save(categoryRepo.create({ name: 'Electronics', code: 'ELE' }));
-  const furniture = await categoryRepo.save(categoryRepo.create({ name: 'Furniture', code: 'FUR' }));
+  const electronics = await categoryRepo.save(
+    categoryRepo.create({ name: 'Electronics', code: 'ELE' })
+  );
+  const furniture = await categoryRepo.save(
+    categoryRepo.create({ name: 'Furniture', code: 'FUR' })
+  );
   const kurti = await categoryRepo.save(categoryRepo.create({ name: 'Kurti', code: 'KRT' }));
 
   await itemRepo.save([
@@ -37,7 +41,11 @@ async function seed() {
   ]);
 
   const vendor = await vendorRepo.save(
-    vendorRepo.create({ id: 'V001', name: 'Jaipur Textiles', contactEmail: 'sales@jaipurtextiles.in' })
+    vendorRepo.create({
+      id: 'V001',
+      name: 'Jaipur Textiles',
+      contactEmail: 'sales@jaipurtextiles.in',
+    })
   );
 
   const design = await designRepo.save(

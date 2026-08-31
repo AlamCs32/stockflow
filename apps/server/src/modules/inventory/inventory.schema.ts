@@ -4,8 +4,16 @@ import { VariantStatus } from '@/entities/product-variant.entity';
 
 export const inventoryQuerySchema = z.object({
   status: z.enum(VariantStatus).optional().meta({ description: 'Filter by variant status' }),
-  designId: z.coerce.number().int().positive().optional().meta({ description: 'Filter by design id', examples: [1] }),
-  channel: z.enum(SalesChannel).optional().meta({ description: 'Only variants priced on this channel' }),
+  designId: z.coerce
+    .number()
+    .int()
+    .positive()
+    .optional()
+    .meta({ description: 'Filter by design id', examples: [1] }),
+  channel: z
+    .enum(SalesChannel)
+    .optional()
+    .meta({ description: 'Only variants priced on this channel' }),
 });
 
 export const stockStatusSchema = z.enum(['IN_STOCK', 'LOW_STOCK', 'OUT_OF_STOCK']);

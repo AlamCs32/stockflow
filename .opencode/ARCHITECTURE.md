@@ -4,6 +4,7 @@
 > Derived from the actual repository on Mon Aug 31 2026.
 
 ## Monorepo layout (pnpm workspaces)
+
 ```
 stockflow/
 ├── apps/
@@ -18,6 +19,7 @@ stockflow/
 ```
 
 ## Server layered structure
+
 ```
 apps/server/src/
 ├── app.ts                # Fastify factory: type providers, global error handler
@@ -49,7 +51,9 @@ apps/server/src/
 ```
 
 ## Module pattern (standard for all resources)
+
 Each resource lives in `apps/server/src/modules/<name>/` with exactly 4 files:
+
 - **`<name>.routes.ts`** — schema-driven route registration using `app.<method>(path, { schema }, handler)`.
 - **`<name>.controller.ts`** — Thin handlers: parse typed `FastifyRequest`, call service, `reply.send()` or `reply.code(201).send()`.
 - **`<name>.service.ts`** — Business logic: validation, uniqueness checks, `AppDataSource.transaction(...)` for multi-writes, `AppError` throws.
@@ -59,7 +63,9 @@ Exception: `health/` uses `health.types.ts` for a hand-written interface instead
 Exception: `items/` defines its response schema inline in `item.routes.ts` instead of a separate `item.schema.ts` (inconsistency).
 
 ## Module registry
+
 All modules are registered in order in `apps/server/src/routes/index.ts`:
+
 1. `healthRoutes` → `GET /health`
 2. `itemRoutes` → `GET /api/items`
 3. `uploadRoutes` → `POST /api/upload`
@@ -69,6 +75,7 @@ All modules are registered in order in `apps/server/src/routes/index.ts`:
 7. `inventoryRoutes` → `GET /api/inventory`
 
 ## Request lifecycle
+
 ```
 HTTP Request
   → Fastify (genReqId: x-request-id or UUID)
@@ -86,6 +93,7 @@ HTTP Request
 ```
 
 ## Domain model
+
 ```
 Vendor (V001 text PK) ─┐
                        ├──→ Design (designCode D001, patternCode) ──→ ProductVariant (SKU) ──→ ChannelPricing (per sales channel)
@@ -94,6 +102,7 @@ Category (code ELE/KRT)─┘                                                  �
 Item (legacy, User → Item → Category)
 User (admin@example.com seeded, plaintext password — no auth)
 ```
+
 - **SKU format**: `VENDOR-CATEGORY-DESIGN-COST-COLOR-SIZE` (e.g., `V001-KRT-D001-130-BLK-XL`)
 - **Margin**: `sellingPrice - costPrice`, rounded to 2 decimals
 - **Stock status**: `OUT_OF_STOCK` (≤0), `LOW_STOCK` (≤5 threshold), `IN_STOCK` (>5)
@@ -102,6 +111,7 @@ User (admin@example.com seeded, plaintext password — no auth)
 - **VariantStatus**: `ACTIVE`, `INACTIVE`
 
 ## Data flow — create variant (key transaction flow)
+
 ```
 POST /api/variants
   → createVariantSchema validates input
@@ -117,6 +127,7 @@ POST /api/variants
 ```
 
 ## Data flow — adjust stock (transaction with business rules)
+
 ```
 PATCH /api/variants/:id/stock  (security: [{ bearerAuth: [] }] — documentation only)
   → adjustStockSchema validates input
@@ -134,6 +145,7 @@ PATCH /api/variants/:id/stock  (security: [{ bearerAuth: [] }] — documentation
 ```
 
 ## Frontend architecture
+
 - Single-page React 18 app (`App.tsx`) with `useState` + `useEffect`.
 - Fetches `GET /api/items` on mount via `fetch` (no HTTP client library).
 - Vite dev proxy: `/api` → `http://localhost:3000`.
@@ -143,6 +155,7 @@ PATCH /api/variants/:id/stock  (security: [{ bearerAuth: [] }] — documentation
 - Alias `@` → `./src`.
 
 ## Extension points
+
 - **New resource**: add `apps/server/src/modules/<name>/` with 4 files + register in `routes/index.ts`.
 - **New entity**: add `apps/server/src/entities/<name>.entity.ts` + add to `AppDataSource.entities` in `data-source.ts` + create migration.
 - **New shared type**: add to `packages/shared/src/index.ts` (currently `Item`, `ApiResponse<T>`, `APP_NAME`, `API_PREFIX`).
@@ -151,6 +164,7 @@ PATCH /api/variants/:id/stock  (security: [{ bearerAuth: [] }] — documentation
 - **New Swagger tag**: add to `swagger.ts` tags array.
 
 ## Known inconsistencies (do not propagate)
+
 - `design.service.ts` duplicates `createDesign` logic that already exists in `design.repository.ts`.
 - `variant.service.ts` and others use `AppDataSource.getRepository()` directly instead of the `repositories/` layer (which has unused helpers like `findVariantById`).
 - `items/` module defines its schema inline in `item.routes.ts` rather than in a separate `item.schema.ts`.
@@ -159,6 +173,7 @@ PATCH /api/variants/:id/stock  (security: [{ bearerAuth: [] }] — documentation
 - `cors.ts` methods list omits `PATCH`, but `PATCH /api/variants/:id/stock` exists.
 
 ## Performance characteristics
+
 - SQLite (better-sqlite3) — single-file, no network DB.
 - In-memory channel filter in `inventory.service.ts` — acceptable for current data volumes, not scalable.
 - Pino async logging with rotating file transport (gzip, 14 files max, 10MB/file).
