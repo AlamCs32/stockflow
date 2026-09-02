@@ -1,11 +1,10 @@
-import { AppDataSource } from '@/database/data-source';
-import { Design } from '@/entities/design.entity';
-import { Supplier } from '@/entities/supplier.entity';
 import { ConflictError, NotFoundError } from '@/shared/errors';
-import { findCategoryById, findDesignByCode } from '@/repositories/design.repository';
-
-const designRepository = AppDataSource.getRepository(Design);
-const supplierRepository = AppDataSource.getRepository(Supplier);
+import {
+  findCategoryById,
+  findDesignByCode,
+  findSupplierById,
+  createDesign as createDesignRecord,
+} from '@/repositories/design.repository';
 
 export async function createDesign(input: {
   designCode: string;
@@ -13,8 +12,8 @@ export async function createDesign(input: {
   name: string;
   supplierId: string;
   categoryId: number;
-}): Promise<Design> {
-  const supplier = await supplierRepository.findOne({ where: { id: input.supplierId } });
+}) {
+  const supplier = await findSupplierById(input.supplierId);
   if (!supplier) {
     throw new NotFoundError(`Supplier ${input.supplierId}`);
   }
@@ -28,12 +27,11 @@ export async function createDesign(input: {
     throw new ConflictError(`Design ${input.designCode} already exists`);
   }
 
-  const design = designRepository.create({
+  return createDesignRecord({
     designCode: input.designCode,
     patternCode: input.patternCode,
     name: input.name,
     supplierId: supplier.id,
     categoryId: category.id,
   });
-  return designRepository.save(design);
 }

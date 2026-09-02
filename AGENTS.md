@@ -6,7 +6,7 @@ Multi-channel e-commerce inventory management monorepo. Indian e-commerce contex
 
 ## Architecture summary
 
-- `apps/server` — Fastify 4 REST API, TypeORM + better-sqlite3, Zod validation, Pino logging
+- `apps/server` — Fastify 4 REST API, TypeORM + PostgreSQL, Zod validation, Pino logging
 - `apps/web` — React 18 + Vite 5 SPA (minimal scaffold, fetches `/api/items`)
 - `packages/shared` — shared types/constants (`Item`, `ApiResponse`, `APP_NAME`, `API_PREFIX`)
 - `packages/config` — env config singleton (`@stockflow/config`)
@@ -17,9 +17,9 @@ Multi-channel e-commerce inventory management monorepo. Indian e-commerce contex
 
 - Node 24, pnpm 11.9, TypeScript 5.4 strict, ESM everywhere
 - Fastify 4 + fastify-type-provider-zod (zod 4.4.3)
-- TypeORM 1.1 + better-sqlite3
+- TypeORM 1.1 + PostgreSQL
 - Pino 10 + pino-pretty + rotating-file-stream
-- @fastify/{cors, helmet, multipart, rate-limit, sensible, static, swagger, swagger-ui}
+- @fastify/{cors, helmet, multipart, rate-limit, sensible, static, swagger, swagger-ui, jwt}
 - React 18 + Vite 5
 - Prettier 3.9, ESLint 10 (flat config) + typescript-eslint 8
 
@@ -35,11 +35,12 @@ Multi-channel e-commerce inventory management monorepo. Indian e-commerce contex
 ## Implementation workflow
 
 1. Add module under `apps/server/src/modules/<name>/` with `<name>.routes.ts`, `<name>.controller.ts`, `<name>.service.ts`, `<name>.schema.ts`
-2. Register routes in `apps/server/src/routes/index.ts`
-3. Re-export config through `apps/server/src/configs/index.ts` (`@stockflow/config`)
-4. Add entities in `apps/server/src/entities/`, create migration via `pnpm --filter @stockflow/server db:migrate:generate`
-5. Import shared via workspace protocol `@stockflow/shared` or `@stockflow/config`
-6. Run `pnpm build && pnpm typecheck && pnpm lint && pnpm format`
+2. Add repository under `apps/server/src/repositories/<entity-name>.repository.ts` with finder/mutation functions
+3. Register routes in `apps/server/src/routes/index.ts`
+4. Re-export config through `apps/server/src/configs/index.ts` (`@stockflow/config`)
+5. Add entities in `apps/server/src/entities/`, create migration via `pnpm --filter @stockflow/server db:migrate:generate`
+6. Import shared via workspace protocol `@stockflow/shared` or `@stockflow/config`
+7. Run `pnpm build && pnpm typecheck && pnpm lint && pnpm format`
 
 ## Frontend rules
 
@@ -51,7 +52,8 @@ Multi-channel e-commerce inventory management monorepo. Indian e-commerce contex
 
 ## Backend rules
 
-- Thin controllers, business logic in services, data access via repositories/AppDataSource
+- Thin controllers, business logic in services, data access via repositories
+- **No direct `AppDataSource.getRepository()` in services** — always use the repository layer
 - Route files: schema-driven with `schema: { tags, summary, description, body, response }` per route
 - Services throw `AppError` subclasses; global handler maps to JSON envelope `{ statusCode, error, message, details? }`
 - All routes `/api/<resource>` except `/health` and `/docs*`
@@ -66,7 +68,7 @@ Multi-channel e-commerce inventory management monorepo. Indian e-commerce contex
 
 ## Database rules
 
-- SQLite via better-sqlite3; DB at `data/database.sqlite` (gitignored)
+- PostgreSQL via `pg`; connection configured in `@stockflow/config` (`DB_HOST`, `DB_PORT`, `DB_USERNAME`, `DB_PASSWORD`, `DB_NAME`)
 - Migrations under `apps/server/src/database/migrations/` named `<timestamp>-<Name>.ts`
 - Entity files: `<name>.entity.ts`; snake_case columns, camelCase props, explicit `@Column({ name: ... })`
 - `synchronize: false` by default; use `db:migrate` / `db:migrate:generate` / `db:migrate:revert`
@@ -77,7 +79,7 @@ Multi-channel e-commerce inventory management monorepo. Indian e-commerce contex
 
 - **No tests exist yet** — `apps/server/tests/` is empty, no test framework installed
 - When adding tests: prefer Vitest (aligned with Vite/web) or Jest; place in `apps/server/tests/` and `apps/web/tests/`
-- Test services independently; mock `AppDataSource` repositories for unit tests
+- Test services independently; mock repository functions for unit tests
 
 ## Error handling
 
@@ -104,13 +106,13 @@ Multi-channel e-commerce inventory management monorepo. Indian e-commerce contex
 ## Naming conventions
 
 - Entities: `PascalCase.entity.ts` (e.g., `product-variant.entity.ts`) — file names kebab-case, class names PascalCase
+- Repositories: `<entity-name>.repository.ts` — exports `<entity>Repository` + named finder/mutation functions
 - Modules: `<name>.route.ts`, `<name>.controller.ts`, `<name>.service.ts`, `<name>.schema.ts`, `<name>.types.ts` (optional)
 - Handlers: `post<Resource>Handler`, `get<Resource>Handler`, `patch<Resource>Handler`, `<resource>Handler`
 - Schemas: `create<Resource>Schema`, `<resource>ResponseSchema`, `<resource>IdParamSchema`
 - Enums: `PascalCase` (e.g., `SalesChannel`, `StockLogReason`, `VariantStatus`)
 - Services: `kebab-case.service.ts`, exported functions named `action<Resource>` or `verb<Resource>`
 - Config: `config` (singleton from `@stockflow/config`)
-- Repositories: `<entity>.repository.ts` with `<entity>Repository` + finder helpers
 
 ## Import conventions
 
@@ -118,6 +120,25 @@ Multi-channel e-commerce inventory management monorepo. Indian e-commerce contex
 - Path alias `@/` → `src/` within each app/package
 - Barrel re-exports: `apps/server/src/configs/index.ts`, `apps/server/src/plugins/index.ts`, `apps/server/src/routes/index.ts`
 - No circular imports (verified by Graphify); entity files import from entities, never from modules/services
+
+## Repository layer
+
+All database access goes through the repository layer in `apps/server/src/repositories/`:
+
+| Repository | Entity | Key functions |
+|------------|--------|---------------|
+| `item.repository.ts` | Item | `findAllItems`, `createItem` |
+| `design.repository.ts` | Design, Category, Supplier | `findCategoryById`, `findDesignByCode`, `findDesignByIdWithRelations`, `findSupplierById`, `createDesign` |
+| `product-variant.repository.ts` | ProductVariant, ChannelPricing | `findVariantById`, `findVariantByIdWithPricings`, `findVariantBySku`, `findVariantsForInventory`, `findPricing`, `createPricing`, `savePricing` |
+| `supplier.repository.ts` | Supplier | `findSupplierById`, `findSupplierByCode`, `findSupplierByEmail`, `findSupplierWithDesigns`, `countSuppliers`, `createSupplier`, `saveSupplier`, `removeSupplier`, `listSuppliers` |
+| `user.repository.ts` | User | `findUserById`, `findUserByEmail`, `findUserWithRoles`, `createUser`, `saveUser` |
+| `refresh-token.repository.ts` | RefreshToken | `findRefreshTokenByHash`, `createRefreshToken`, `saveRefreshToken`, `revokeAllUserTokens` |
+| `stock-log.repository.ts` | StockLog | `createStockLog` |
+
+**Rules:**
+- Services import from repositories, never from `AppDataSource` directly
+- Each repository exports the TypeORM repository instance + named functions
+- Transaction-heavy code (e.g., `stock.service.ts`) may use `AppDataSource.transaction()` with `manager` — this is acceptable
 
 ## Code review checklist
 
@@ -131,6 +152,7 @@ Multi-channel e-commerce inventory management monorepo. Indian e-commerce contex
 - [ ] New entity has a migration (if schema changes)
 - [ ] No secrets in `.env`, `src/`, or commits
 - [ ] PATCH methods included in CORS methods list if applicable
+- [ ] No direct `AppDataSource.getRepository()` calls in services
 
 ## AI implementation workflow
 
@@ -150,6 +172,7 @@ Multi-channel e-commerce inventory management monorepo. Indian e-commerce contex
 - Do NOT add routes directly in `app.ts`; always use module route files
 - Do NOT use raw `fetch`/`JSON.parse` without error handling in web
 - Do NOT duplicate entity/repository logic across service and repository files
+- Do NOT call `AppDataSource.getRepository()` directly in services — use the repository layer
 
 ## Preferred patterns
 
@@ -159,3 +182,4 @@ Multi-channel e-commerce inventory management monorepo. Indian e-commerce contex
 - Centralized error envelope via `app.ts` setErrorHandler
 - Config injected via `@stockflow/config` singleton, never hardcoded env reads in app code
 - Logger built via `buildLoggerConfig()` in `configs/logger.ts`; request IDs via `genRequestId`
+- Repository layer for all DB access: `<entity>.repository.ts` exports repository instance + named functions

@@ -1,6 +1,6 @@
 import type { FastifyReply, FastifyRequest } from 'fastify';
 import {
-  createSupplier,
+  createSupplierService as createSupplier,
   listSuppliers,
   getSupplierOrThrow,
   updateSupplier,

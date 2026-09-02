@@ -1,6 +1,6 @@
 import { config } from '@stockflow/config';
-import { AppDataSource } from '@/database/data-source';
-import { ProductVariant, VariantStatus } from '@/entities/product-variant.entity';
+import { VariantStatus } from '@/entities/product-variant.entity';
+import { findVariantsForInventory } from '@/repositories/product-variant.repository';
 import type { InventoryQuery } from './inventory.schema';
 
 export type StockStatus = 'IN_STOCK' | 'LOW_STOCK' | 'OUT_OF_STOCK';
@@ -43,13 +43,9 @@ function resolveStockStatus(stockQuantity: number): StockStatus {
 }
 
 export async function listInventory(query: InventoryQuery): Promise<InventoryItem[]> {
-  const variants = await AppDataSource.getRepository(ProductVariant).find({
-    where: {
-      ...(query.status ? { status: query.status } : {}),
-      ...(query.designId ? { designId: query.designId } : {}),
-    },
-    relations: { design: { supplier: true, category: true }, pricings: true },
-    order: { id: 'ASC' },
+  const variants = await findVariantsForInventory({
+    status: query.status,
+    designId: query.designId,
   });
 
   return variants

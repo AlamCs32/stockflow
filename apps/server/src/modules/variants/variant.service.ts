@@ -1,24 +1,27 @@
 import { AppDataSource } from '@/database/data-source';
-import { ChannelPricing, SalesChannel } from '@/entities/channel-pricing.entity';
-import { Design } from '@/entities/design.entity';
 import { ProductVariant } from '@/entities/product-variant.entity';
 import { StockLog, StockLogReason } from '@/entities/stock-log.entity';
-import { VariantStatus } from '@/entities/product-variant.entity';
 import { ConflictError, NotFoundError } from '@/shared/errors';
 import { buildSku } from '@/services/sku.service';
 import { calculateMargin } from '@/services/pricing.service';
 import { adjustStock as adjustStockAudit } from '@/services/stock.service';
 import type { AdjustStockInput, CreateVariantInput, UpsertPricingInput } from './variant.schema';
+import { findDesignByIdWithRelations } from '@/repositories/design.repository';
+import {
+  findVariantBySku,
+  findVariantByIdWithPricings,
+  findPricing,
+  savePricing,
+  createPricing,
+} from '@/repositories/product-variant.repository';
+import type { ChannelPricing } from '@/entities/channel-pricing.entity';
+import { VariantStatus } from '@/entities/product-variant.entity';
 
-const designRepository = AppDataSource.getRepository(Design);
-const productVariantRepository = AppDataSource.getRepository(ProductVariant);
-const channelPricingRepository = AppDataSource.getRepository(ChannelPricing);
+export { VariantStatus };
+export type { SalesChannel } from '@/entities/channel-pricing.entity';
 
 export async function createVariant(input: CreateVariantInput): Promise<ProductVariant> {
-  const design = await designRepository.findOne({
-    where: { id: input.designId },
-    relations: { supplier: true, category: true },
-  });
+  const design = await findDesignByIdWithRelations(input.designId);
   if (!design) {
     throw new NotFoundError('Design');
   }
@@ -35,7 +38,7 @@ export async function createVariant(input: CreateVariantInput): Promise<ProductV
     size: input.size,
   });
 
-  if (await productVariantRepository.findOne({ where: { sku } })) {
+  if (await findVariantBySku(sku)) {
     throw new ConflictError(`Variant with SKU ${sku} already exists`);
   }
 
@@ -75,29 +78,26 @@ export async function upsertPricing(
   variantId: number,
   input: UpsertPricingInput
 ): Promise<ChannelPricing> {
-  const variant = await productVariantRepository.findOne({ where: { id: variantId } });
+  const variant = await findVariantByIdWithPricings(variantId);
   if (!variant) {
     throw new NotFoundError('Product variant');
   }
 
   const margin = calculateMargin(input.sellingPrice, variant.costPrice);
-  const existing = await channelPricingRepository.findOne({
-    where: { variantId, channelName: input.channelName },
-  });
+  const existing = await findPricing(variantId, input.channelName);
 
   if (existing) {
     existing.sellingPrice = input.sellingPrice;
     existing.margin = margin;
-    return channelPricingRepository.save(existing);
+    return savePricing(existing);
   }
 
-  const pricing = channelPricingRepository.create({
+  return createPricing({
     variantId,
     channelName: input.channelName,
     sellingPrice: input.sellingPrice,
     margin,
   });
-  return channelPricingRepository.save(pricing);
 }
 
 export async function adjustStock(variantId: number, input: AdjustStockInput) {
@@ -110,14 +110,9 @@ export async function adjustStock(variantId: number, input: AdjustStockInput) {
 }
 
 export async function getVariantOrThrow(variantId: number): Promise<ProductVariant> {
-  const variant = await productVariantRepository.findOne({
-    where: { id: variantId },
-    relations: { pricings: true },
-  });
+  const variant = await findVariantByIdWithPricings(variantId);
   if (!variant) {
     throw new NotFoundError('Product variant');
   }
   return variant;
 }
-
-export type { SalesChannel, VariantStatus };
