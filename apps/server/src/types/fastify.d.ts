@@ -9,12 +9,12 @@ declare module 'fastify' {
 declare module '@fastify/jwt' {
   interface FastifyJWT {
     payload: {
-      sub: string;
-      email: string;
+      userId: string;
+      isActive: boolean;
     };
     user: {
-      sub: string;
-      email: string;
+      userId: string;
+      isActive: boolean;
     };
   }
 }

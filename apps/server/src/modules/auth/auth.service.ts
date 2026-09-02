@@ -16,7 +16,7 @@ import {
   revokeAllUserTokens as revokeAll,
 } from '@/repositories/refresh-token.repository';
 
-export type SignToken = (payload: { sub: string; email: string }) => string;
+export type SignToken = (payload: { userId: string; isActive: boolean }) => string;
 
 export interface AuthResult {
   user: {
@@ -49,7 +49,7 @@ export async function register(input: RegisterInput, signToken: SignToken): Prom
     phone: input.phone ?? null,
   });
 
-  const accessToken = signToken({ sub: user.id, email: user.email });
+  const accessToken = signToken({ userId: user.id, isActive: user.isActive });
   const refreshToken = await createRefreshTokenEntry(user.id);
 
   return { user: toUserResponse(user), accessToken, refreshToken };
@@ -73,7 +73,7 @@ export async function login(input: LoginInput, signToken: SignToken): Promise<Au
   user.lastLoginAt = new Date();
   await saveUser(user);
 
-  const accessToken = signToken({ sub: user.id, email: user.email });
+  const accessToken = signToken({ userId: user.id, isActive: user.isActive });
   const refreshToken = await createRefreshTokenEntry(user.id);
 
   return { user: toUserResponse(user), accessToken, refreshToken };
@@ -99,7 +99,7 @@ export async function refresh(input: RefreshInput, signToken: SignToken): Promis
   existing.revokedAt = new Date();
   await saveRefreshToken(existing);
 
-  const accessToken = signToken({ sub: user.id, email: user.email });
+  const accessToken = signToken({ userId: user.id, isActive: user.isActive });
   const refreshToken = await createRefreshTokenEntry(user.id);
 
   return { user: toUserResponse(user), accessToken, refreshToken };
