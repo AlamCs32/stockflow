@@ -28,38 +28,40 @@ export function Login() {
       const result = await login({ email, password }).unwrap();
       dispatch(setTokens({ accessToken: result.accessToken, refreshToken: result.refreshToken }));
       dispatch(setUser(result.user));
-      toastHelper.success('Welcome back!');
+      toastHelper.success('Signed in', `Welcome, ${result.user.name}`);
       navigate('/dashboard');
     } catch (error) {
-      toastHelper.error(error, 'Login failed');
+      toastHelper.error(error, 'Could not sign in');
     }
   };
 
   return (
-    <Card className="w-full max-w-md">
+    <Card className="w-full max-w-md glass-card">
       <CardHeader>
-        <CardTitle>Login</CardTitle>
-        <CardDescription>Sign in to your account</CardDescription>
+        <CardTitle className="text-text-primary">Sign in</CardTitle>
+        <CardDescription className="text-text-secondary">
+          Enter your credentials to continue
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email" className="text-text-secondary">Email</Label>
             <Input
               id="email"
               type="email"
-              placeholder="admin@stockflow.com"
+              placeholder="you@company.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
+            <Label htmlFor="password" className="text-text-secondary">Password</Label>
             <Input
               id="password"
               type="password"
-              placeholder="••••••••"
+              placeholder="Your password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required

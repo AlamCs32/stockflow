@@ -7,7 +7,7 @@ export function DashboardLayout() {
   const sidebarOpen = useAppSelector((state) => state.app.sidebarOpen);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-neutral-bg1">
       <Sidebar />
       <div
         className={`transition-all duration-300 ${
