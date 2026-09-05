@@ -1,5 +1,7 @@
+import { motion } from 'framer-motion';
 import { Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { fadeIn, defaultTransition } from '@/lib/animations';
 
 interface LoadingSpinnerProps {
   size?: 'sm' | 'md' | 'lg';
@@ -13,7 +15,7 @@ const sizes = {
 };
 
 export function LoadingSpinner({ size = 'md', className }: LoadingSpinnerProps) {
-  return <Loader2 className={cn('animate-spin text-muted-foreground', sizes[size], className)} />;
+  return <Loader2 className={cn('animate-spin text-brand', sizes[size], className)} />;
 }
 
 interface LoadingPageProps {
@@ -22,9 +24,15 @@ interface LoadingPageProps {
 
 export function LoadingPage({ message = 'Loading...' }: LoadingPageProps) {
   return (
-    <div className="flex flex-col items-center justify-center py-12">
+    <motion.div
+      className="flex flex-col items-center justify-center py-12"
+      initial="hidden"
+      animate="visible"
+      variants={fadeIn}
+      transition={defaultTransition}
+    >
       <LoadingSpinner size="lg" />
-      <p className="mt-4 text-sm text-muted-foreground">{message}</p>
-    </div>
+      <p className="mt-4 text-sm text-text-secondary">{message}</p>
+    </motion.div>
   );
 }

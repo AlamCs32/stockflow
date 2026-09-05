@@ -16,7 +16,7 @@ export const FormField = forwardRef<HTMLInputElement, FormFieldProps>(
     return (
       <div className={cn('space-y-2', containerClassName)}>
         {label && (
-          <Label htmlFor={inputId} className={error && 'text-destructive'}>
+          <Label htmlFor={inputId} className={error ? 'text-status-error' : 'text-text-secondary'}>
             {label}
           </Label>
         )}
@@ -24,14 +24,14 @@ export const FormField = forwardRef<HTMLInputElement, FormFieldProps>(
           ref={ref}
           id={inputId}
           className={cn(
-            'flex h-10 w-full rounded-md border bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
-            error && 'border-destructive focus-visible:ring-destructive',
+            'glass-input flex h-10 w-full rounded-md px-3 py-2 text-sm text-text-primary placeholder:text-text-muted focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50',
+            error && 'border-status-error focus:border-status-error',
             className
           )}
           {...props}
         />
-        {error && <p className="text-sm text-destructive">{error}</p>}
-        {hint && !error && <p className="text-sm text-muted-foreground">{hint}</p>}
+        {error && <p className="text-sm text-status-error">{error}</p>}
+        {hint && !error && <p className="text-sm text-text-muted">{hint}</p>}
       </div>
     );
   }

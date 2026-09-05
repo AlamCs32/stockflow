@@ -8,21 +8,21 @@ export function Header() {
   const user = useAppSelector((state) => state.auth.user);
 
   return (
-    <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b bg-card px-6">
+    <header className="glass sticky top-0 z-30 flex h-16 items-center justify-between px-6">
       <div />
       <div className="flex items-center gap-4">
         <ThemeToggle />
-        <Button variant="ghost" size="icon" className="relative">
+        <Button variant="ghost" size="icon" className="relative text-text-secondary hover:text-text-primary">
           <Bell className="h-5 w-5" />
-          <Badge className="absolute -right-1 -top-1 h-5 w-5 justify-center rounded-full p-0 text-xs">
+          <Badge className="absolute -right-1 -top-1 h-5 w-5 justify-center rounded-full p-0 text-xs bg-brand text-white">
             0
           </Badge>
         </Button>
-        <Button variant="ghost" size="icon">
+        <Button variant="ghost" size="icon" className="text-text-secondary hover:text-text-primary">
           <User className="h-5 w-5" />
         </Button>
         {user && (
-          <span className="text-sm font-medium">{user.name}</span>
+          <span className="text-sm font-medium text-text-primary">{user.name}</span>
         )}
       </div>
     </header>

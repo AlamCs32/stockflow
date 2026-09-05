@@ -35,20 +35,26 @@ export function ConfirmDialog({
 }: ConfirmDialogProps) {
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
-      <AlertDialogContent>
+      <AlertDialogContent className="glass-card">
         <AlertDialogHeader>
           {variant === 'destructive' && (
-            <AlertTriangle className="mb-2 h-6 w-6 text-destructive" />
+            <AlertTriangle className="mb-2 h-6 w-6 text-status-error" />
           )}
-          <AlertDialogTitle>{title}</AlertDialogTitle>
-          <AlertDialogDescription>{description}</AlertDialogDescription>
+          <AlertDialogTitle className="text-text-primary">{title}</AlertDialogTitle>
+          <AlertDialogDescription className="text-text-secondary">
+            {description}
+          </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel disabled={loading}>{cancelLabel}</AlertDialogCancel>
           <AlertDialogAction
             onClick={onConfirm}
             disabled={loading}
-            className={variant === 'destructive' ? 'bg-destructive text-destructive-foreground hover:bg-destructive/90' : ''}
+            className={
+              variant === 'destructive'
+                ? 'bg-status-error text-white hover:bg-status-error/90'
+                : 'bg-brand text-white hover:bg-brand-hover'
+            }
           >
             {loading ? 'Processing...' : confirmLabel}
           </AlertDialogAction>

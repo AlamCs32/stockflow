@@ -23,25 +23,25 @@ export function Sidebar() {
   return (
     <aside
       className={cn(
-        'fixed left-0 top-0 z-40 h-screen border-r bg-card transition-all duration-300',
+        'glass-panel fixed left-0 top-0 z-40 h-screen transition-all duration-300',
         sidebarOpen ? 'w-64' : 'w-16'
       )}
     >
       <div className="flex h-16 items-center justify-between px-4">
         {sidebarOpen && (
-          <span className="text-lg font-bold">StockFlow</span>
+          <span className="text-lg font-bold text-text-primary">StockFlow</span>
         )}
         <Button
           variant="ghost"
           size="icon"
           onClick={() => dispatch(toggleSidebar())}
-          className="h-8 w-8"
+          className="h-8 w-8 text-text-secondary hover:text-text-primary"
         >
           {sidebarOpen ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
         </Button>
       </div>
 
-      <Separator />
+      <Separator className="bg-border-subtle" />
 
       <nav className="mt-4 space-y-1 px-2">
         {navItems.map((item) => {
@@ -55,8 +55,8 @@ export function Sidebar() {
               className={cn(
                 'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
                 isActive
-                  ? 'bg-primary text-primary-foreground'
-                  : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+                  ? 'bg-brand text-white'
+                  : 'text-text-secondary hover:bg-neutral-bg3 hover:text-text-primary'
               )}
             >
               <Icon className="h-4 w-4 shrink-0" />
@@ -78,13 +78,13 @@ export function Sidebar() {
       </nav>
 
       <div className="absolute bottom-4 left-0 right-0 px-2">
-        <Separator className="mb-4" />
+        <Separator className="mb-4 bg-border-subtle" />
         <Tooltip>
           <TooltipTrigger asChild>
             <Button
               variant="ghost"
               className={cn(
-                'w-full justify-start gap-3',
+                'w-full justify-start gap-3 text-text-secondary hover:text-text-primary',
                 !sidebarOpen && 'justify-center px-0'
               )}
               onClick={() => dispatch(logout())}

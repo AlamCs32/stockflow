@@ -37,10 +37,75 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
 
+  /* Dark theme brand colors */
+  --color-brand: #8251EE;
+  --color-brand-hover: #9366F5;
+  --color-brand-light: #A37EF5;
+  --color-brand-subtle: rgba(130, 81, 238, 0.15);
+
+  /* Neutral backgrounds */
+  --color-neutral-bg1: hsl(240, 6%, 10%);
+  --color-neutral-bg2: hsl(240, 5%, 12%);
+  --color-neutral-bg3: hsl(240, 5%, 14%);
+  --color-neutral-bg4: hsl(240, 4%, 18%);
+  --color-neutral-bg5: hsl(240, 4%, 22%);
+  --color-neutral-bg6: hsl(240, 4%, 26%);
+
+  /* Text colors */
+  --color-text-primary: #FFFFFF;
+  --color-text-secondary: #A1A1AA;
+  --color-text-muted: #71717A;
+
+  /* Border colors */
+  --color-border-subtle: hsla(0, 0%, 100%, 0.08);
+  --color-border-default: hsla(0, 0%, 100%, 0.12);
+  --color-border-strong: hsla(0, 0%, 100%, 0.20);
+
+  /* Status colors */
+  --color-status-success: #10B981;
+  --color-status-warning: #F59E0B;
+  --color-status-error: #EF4444;
+  --color-status-info: #3B82F6;
+
+  /* Data visualization colors */
+  --color-dataviz-purple: #8251EE;
+  --color-dataviz-blue: #3B82F6;
+  --color-dataviz-green: #10B981;
+  --color-dataviz-yellow: #F59E0B;
+  --color-dataviz-red: #EF4444;
+  --color-dataviz-pink: #EC4899;
+  --color-dataviz-cyan: #06B6D4;
+
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+
+  /* Animations */
+  --animate-fade-in: fadeIn 0.3s ease-out;
+  --animate-slide-up: slideUp 0.3s ease-out;
+  --animate-slide-down: slideDown 0.3s ease-out;
+  --animate-scale-in: scaleIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@keyframes slideUp {
+  0% { opacity: 0; transform: translateY(10px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideDown {
+  0% { opacity: 0; transform: translateY(-10px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scaleIn {
+  0% { opacity: 0; transform: scale(0.95); }
+  100% { opacity: 1; transform: scale(1); }
 }
 
 :root {
@@ -123,6 +188,10 @@
     border-color: var(--color-border);
   }
 
+  html {
+    color-scheme: dark;
+  }
+
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
@@ -131,4 +200,66 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
+
+  *:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--color-background), 0 0 0 4px var(--color-primary);
+  }
+}
+
+@layer components {
+  .glass {
+    backdrop-filter: blur(12px);
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .glass-card {
+    backdrop-filter: blur(12px);
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 1rem;
+  }
+
+  .glass-panel {
+    backdrop-filter: blur(16px);
+    background-color: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .glass-overlay {
+    backdrop-filter: blur(4px);
+    background-color: rgba(0, 0, 0, 0.6);
+  }
+
+  .glass-input {
+    backdrop-filter: blur(4px);
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: border-color 0.15s ease, background-color 0.15s ease;
+  }
+
+  .glass-input:focus {
+    border-color: var(--color-brand);
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: hsl(240, 5%, 12%);
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: hsl(240, 4%, 22%);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: hsl(240, 4%, 26%);
 }

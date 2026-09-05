@@ -24,8 +24,8 @@ export function PageHeader({
   return (
     <div className={cn('flex items-center justify-between', className)}>
       <div className="space-y-1">
-        <h1 className="text-3xl font-bold tracking-tight">{title}</h1>
-        {description && <p className="text-muted-foreground">{description}</p>}
+        <h1 className="text-3xl font-bold tracking-tight text-text-primary">{title}</h1>
+        {description && <p className="text-text-secondary">{description}</p>}
       </div>
       {action ?? (
         actionLabel && (
