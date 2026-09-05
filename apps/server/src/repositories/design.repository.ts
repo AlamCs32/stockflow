@@ -36,6 +36,7 @@ export async function createDesign(data: {
   name: string;
   supplierId: string;
   categoryId: number;
+  categoryAttributes?: Record<string, unknown>;
 }): Promise<Design> {
   const design = designRepository.create(data);
   return designRepository.save(design);

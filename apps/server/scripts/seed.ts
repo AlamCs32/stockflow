@@ -62,7 +62,50 @@ async function seed() {
     );
   }
 
-  const kurti = await categoryRepo.save(categoryRepo.create({ name: 'Kurti', code: 'KRT' }));
+  const kurti = await categoryRepo.save(
+    categoryRepo.create({
+      name: 'Kurti',
+      code: 'KRT',
+      attributesSchema: [
+        { name: 'fabricType', label: 'Fabric Type', type: 'select', required: true, options: ['Cotton', 'Silk', 'Rayon', 'Georgette', 'Chiffon', 'Linen'] },
+        { name: 'pattern', label: 'Pattern', type: 'select', required: true, options: ['Floral', 'Geometric', 'Abstract', 'Solid', 'Printed', 'Embroidered'] },
+        { name: 'sizeRange', label: 'Size Range', type: 'select', required: true, options: ['XS-XL', 'S-XXL', 'M-3XL', 'Free Size'] },
+        { name: 'occasion', label: 'Occasion', type: 'select', required: false, options: ['Casual', 'Party', 'Office', 'Festive', 'Wedding'] },
+        { name: 'workType', label: 'Work Type', type: 'select', required: false, options: ['Print', 'Embroidery', 'Thread Work', 'Sequins', 'Mirror Work', 'None'] },
+        { name: 'description', label: 'Description', type: 'textarea', required: false, placeholder: 'Describe the kurti design...' },
+      ],
+    })
+  );
+
+  await categoryRepo.save(
+    categoryRepo.create({
+      name: 'Bag',
+      code: 'BAG',
+      attributesSchema: [
+        { name: 'material', label: 'Material', type: 'select', required: true, options: ['Leather', 'Canvas', 'Nylon', 'Polyester', 'Jute', 'Denim'] },
+        { name: 'bagType', label: 'Bag Type', type: 'select', required: true, options: ['Tote', 'Backpack', 'Clutch', 'Shoulder', 'Crossbody', 'Duffel', 'Messenger'] },
+        { name: 'capacity', label: 'Capacity (Litres)', type: 'number', required: false, placeholder: 'e.g. 20' },
+        { name: 'compartments', label: 'Compartments', type: 'number', required: false, placeholder: 'e.g. 3' },
+        { name: 'hasStrap', label: 'Adjustable Strap', type: 'select', required: false, options: ['Yes', 'No'] },
+        { name: 'description', label: 'Description', type: 'textarea', required: false, placeholder: 'Describe the bag...' },
+      ],
+    })
+  );
+
+  await categoryRepo.save(
+    categoryRepo.create({
+      name: 'Electronics',
+      code: 'ELC',
+      attributesSchema: [
+        { name: 'brand', label: 'Brand', type: 'text', required: true, placeholder: 'e.g. Samsung' },
+        { name: 'warranty', label: 'Warranty (months)', type: 'number', required: true, placeholder: 'e.g. 12' },
+        { name: 'voltage', label: 'Voltage', type: 'text', required: false, placeholder: 'e.g. 220V' },
+        { name: 'connectivity', label: 'Connectivity', type: 'select', required: false, options: ['WiFi', 'Bluetooth', 'USB-C', 'Wired', 'NFC'] },
+        { name: 'color', label: 'Color', type: 'text', required: false, placeholder: 'e.g. Black' },
+        { name: 'description', label: 'Description', type: 'textarea', required: false, placeholder: 'Describe the product...' },
+      ],
+    })
+  );
 
   const supplier = await supplierRepo.save(
     supplierRepo.create({
@@ -90,6 +133,14 @@ async function seed() {
       name: 'Floral Print Anarkali Kurti',
       supplierId: supplier.id,
       categoryId: kurti.id,
+      categoryAttributes: {
+        fabricType: 'Cotton',
+        pattern: 'Floral',
+        sizeRange: 'S-XXL',
+        occasion: 'Casual',
+        workType: 'Print',
+        description: 'Beautiful floral print anarkali kurti in cotton',
+      },
     })
   );
 
@@ -143,7 +194,7 @@ async function seed() {
   }
 
   console.log(
-    `Seed completed: 1 user, 1 admin role, ${modules.length} modules, 2 categories, 1 supplier, 1 design, 1 variant (${sku}), 3 channel pricings`
+    `Seed completed: 1 user, 1 admin role, ${modules.length} modules, 3 categories, 1 supplier, 1 design, 1 variant (${sku}), 3 channel pricings`
   );
   await AppDataSource.destroy();
 }

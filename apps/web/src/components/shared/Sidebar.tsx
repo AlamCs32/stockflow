@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { LayoutDashboard, ChevronLeft, ChevronRight, LogOut } from 'lucide-react';
+import { LayoutDashboard, Package, Users, ChevronLeft, ChevronRight, LogOut } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAppDispatch, useAppSelector, toggleSidebar, logout } from '@/store';
 import { Button } from '@/components/ui/button';
@@ -12,6 +12,8 @@ import { Separator } from '@/components/ui/separator';
 
 const navItems = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+  { href: '/dashboard/catalog', label: 'Catalog', icon: Package },
+  { href: '/dashboard/suppliers', label: 'Suppliers', icon: Users },
 ];
 
 export function Sidebar() {

@@ -39,6 +39,9 @@ export class Design {
   @Column({ type: 'integer', name: 'category_id' })
   categoryId: number;
 
+  @Column({ type: 'jsonb', name: 'category_attributes', default: '{}' })
+  categoryAttributes: Record<string, unknown>;
+
   @OneToMany(() => ProductVariant, (variant) => variant.design)
   variants: ProductVariant[];
 
