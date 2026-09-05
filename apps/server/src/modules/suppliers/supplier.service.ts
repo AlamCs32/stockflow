@@ -1,10 +1,11 @@
 import { BusinessRuleError, ConflictError, NotFoundError } from '@/shared/errors';
+import { AppDataSource } from '@/database/data-source';
+import { Design } from '@/entities/design.entity';
 import {
   countSuppliers,
   findSupplierByCode,
   findSupplierByEmail,
   findSupplierById,
-  findSupplierWithDesigns,
   createSupplier,
   saveSupplier,
   removeSupplier,
@@ -127,11 +128,12 @@ export async function updateSupplier(
 }
 
 export async function deleteSupplier(id: string): Promise<void> {
-  const supplier = await findSupplierWithDesigns(id);
+  const supplier = await findSupplierById(id);
   if (!supplier) {
     throw new NotFoundError('Supplier');
   }
-  if (supplier.designs && supplier.designs.length > 0) {
+  const designCount = await AppDataSource.getRepository(Design).count({ where: { supplierId: id } });
+  if (designCount > 0) {
     throw new BusinessRuleError('Cannot delete supplier with associated designs');
   }
   await removeSupplier(supplier);

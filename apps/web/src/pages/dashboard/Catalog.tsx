@@ -24,6 +24,7 @@ import {
 } from '@/store';
 import type { CategoryFieldDef } from '@/store';
 import { toastHelper } from '@/lib/toast';
+import { handleMutationError } from '@/lib/api-error';
 
 const designMetaSchema = z.object({
   designCode: z.string().trim().min(1, 'Design code is required'),
@@ -41,7 +42,7 @@ export function Catalog() {
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
   const [categoryAttributes, setCategoryAttributes] = useState<Record<string, unknown>>({});
 
-  const { data: categoriesData, isLoading: categoriesLoading, error: categoriesError } =
+  const { data: categoriesData, isLoading: categoriesLoading, error: categoriesError, refetch: refetchCategories } =
     useGetCategoriesQuery();
   const { data: fieldsData, isLoading: fieldsLoading } = useGetCategoryFieldsQuery(
     selectedCategoryId!,
@@ -105,12 +106,12 @@ export function Catalog() {
       toastHelper.success('Created', `Catalog entry for "${data.name}" created successfully`);
       handleBack();
     } catch (err) {
-      toastHelper.error(err, 'Failed to create catalog entry');
+      handleMutationError(err, 'Failed to create catalog entry');
     }
   }
 
   if (categoriesLoading) return <LoadingPage />;
-  if (categoriesError) return <ErrorState message="Failed to load categories" />;
+  if (categoriesError) return <ErrorState message="Failed to load categories" onRetry={refetchCategories} />;
 
   return (
     <PageTransition>

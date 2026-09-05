@@ -38,6 +38,7 @@ import {
 } from '@/store/supplier';
 import type { Supplier, SupplierCategory, AvailabilityStatus } from '@/store/supplier';
 import { toastHelper } from '@/lib/toast';
+import { handleMutationError } from '@/lib/api-error';
 import {
   supplierFormSchema,
   supplierDefaultValues,
@@ -65,7 +66,7 @@ export function Suppliers() {
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [selectedSupplier, setSelectedSupplier] = useState<Supplier | null>(null);
 
-  const { data, isLoading, error } = useGetSuppliersQuery();
+  const { data, isLoading, error, refetch } = useGetSuppliersQuery();
   const [createSupplier, { isLoading: isCreating }] = useCreateSupplierMutation();
   const [updateSupplier, { isLoading: isUpdating }] = useUpdateSupplierMutation();
   const [deleteSupplier, { isLoading: isDeleting }] = useDeleteSupplierMutation();
@@ -101,12 +102,12 @@ export function Suppliers() {
       setDeleteOpen(false);
       setSelectedSupplier(null);
     } catch (err) {
-      toastHelper.error(err, 'Failed to delete supplier');
+      handleMutationError(err, 'Failed to delete supplier');
     }
   }
 
   if (isLoading) return <LoadingPage />;
-  if (error) return <ErrorState message="Failed to load suppliers" />;
+  if (error) return <ErrorState message="Failed to load suppliers" onRetry={refetch} />;
 
   return (
     <PageTransition>
@@ -203,12 +204,16 @@ export function Suppliers() {
           supplier={selectedSupplier}
           onClose={handleDialogClose}
           onSubmit={async (values) => {
-            if (editOpen && selectedSupplier) {
-              await updateSupplier({ id: selectedSupplier.id, body: values }).unwrap();
-              toastHelper.success('Updated', 'Supplier updated successfully');
-            } else {
-              await createSupplier(values).unwrap();
-              toastHelper.success('Created', 'Supplier added successfully');
+            try {
+              if (editOpen && selectedSupplier) {
+                await updateSupplier({ id: selectedSupplier.id, body: values }).unwrap();
+                toastHelper.success('Updated', 'Supplier updated successfully');
+              } else {
+                await createSupplier(values).unwrap();
+                toastHelper.success('Created', 'Supplier added successfully');
+              }
+            } catch (err) {
+              handleMutationError(err, 'Failed to save supplier');
             }
           }}
           isLoading={isCreating || isUpdating}
@@ -284,8 +289,9 @@ function SupplierFormDialog({
     onClose();
   }
 
-  function handleValidSubmit(data: Record<string, unknown>) {
-    onSubmit(data as SupplierFormValues);
+  async function handleValidSubmit(data: Record<string, unknown>) {
+    await onSubmit(data as SupplierFormValues);
+    handleClose();
   }
 
   return (

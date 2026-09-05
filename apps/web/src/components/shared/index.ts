@@ -14,3 +14,5 @@ export { Sidebar } from './Sidebar';
 export { Header } from './Header';
 export { ProtectedRoute } from './ProtectedRoute';
 export { PageTransition } from './PageTransition';
+export { ErrorBoundary } from './ErrorBoundary';
+export { RouteError } from './RouteError';

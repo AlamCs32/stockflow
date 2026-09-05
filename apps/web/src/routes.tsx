@@ -2,6 +2,7 @@ import { createBrowserRouter } from 'react-router-dom';
 import { AuthLayout } from '@/components/layouts/AuthLayout';
 import { DashboardLayout } from '@/components/layouts/DashboardLayout';
 import { ProtectedRoute } from '@/components/shared/ProtectedRoute';
+import { RouteError } from '@/components/shared/RouteError';
 import { Login } from '@/pages/auth/Login';
 import { Dashboard } from '@/pages/dashboard/Dashboard';
 import { Catalog } from '@/pages/dashboard/Catalog';
@@ -12,6 +13,7 @@ export const router = createBrowserRouter([
   {
     path: '/',
     element: <AuthLayout />,
+    errorElement: <RouteError />,
     children: [
       { index: true, element: <Login /> },
       { path: 'login', element: <Login /> },
@@ -24,6 +26,7 @@ export const router = createBrowserRouter([
         <DashboardLayout />
       </ProtectedRoute>
     ),
+    errorElement: <RouteError />,
     children: [
       { index: true, element: <Dashboard /> },
       { path: 'catalog', element: <Catalog /> },

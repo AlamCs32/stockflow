@@ -8,13 +8,17 @@ import '@/index.css';
 import { ThemeProvider } from '@/components/shared/ThemeProvider';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { Toaster } from '@/components/ui/sonner';
+import { ErrorBoundary } from '@/components/shared/ErrorBoundary';
+import '@/store/listeners';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <Provider store={store}>
       <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
         <TooltipProvider>
-          <RouterProvider router={router} />
+          <ErrorBoundary>
+            <RouterProvider router={router} />
+          </ErrorBoundary>
           <Toaster position="top-right" richColors closeButton />
         </TooltipProvider>
       </ThemeProvider>

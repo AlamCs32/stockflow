@@ -17,10 +17,10 @@ export const supplierFormSchema = z.object({
     .min(10, 'Mobile must be at least 10 digits')
     .max(15, 'Mobile must be at most 15 digits'),
   category: z.enum(supplierCategories),
-  trustScore: z.number().int().min(0).max(100),
-  qualityScore: z.number().int().min(0).max(100),
+  trustScore: z.coerce.number().int().min(0).max(100),
+  qualityScore: z.coerce.number().int().min(0).max(100),
   availabilityStatus: z.enum(availabilityStatuses),
-  leadTimeDays: z.number().int().min(0).nullable().optional(),
+  leadTimeDays: z.coerce.number().int().min(0).nullable().optional(),
   address: z.string().trim().max(255).nullable().optional(),
   city: z.string().trim().max(100).nullable().optional(),
   state: z.string().trim().max(100).nullable().optional(),
