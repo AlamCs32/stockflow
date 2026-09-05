@@ -6,11 +6,8 @@ import {
   postVariantHandler,
 } from './variant.controller';
 import {
-  adjustStockResponseSchema,
   adjustStockSchema,
-  createVariantResponseSchema,
   createVariantSchema,
-  upsertPricingResponseSchema,
   upsertPricingSchema,
   variantIdParamSchema,
   variantWithPricingsResponseSchema,
@@ -26,7 +23,6 @@ export default async function variantRoutes(app: FastifyInstance) {
         description:
           'Generates the SKU as SUPPLIER-CATEGORY-DESIGN-COST-COLOR-SIZE (e.g. S001-KRT-D001-130-BLK-XL) and records the initial stock as an INWARD stock log inside a database transaction.',
         body: createVariantSchema,
-        response: { 201: createVariantResponseSchema },
       },
     },
     postVariantHandler
@@ -55,7 +51,6 @@ export default async function variantRoutes(app: FastifyInstance) {
           'Upserts the selling price per sales channel. The margin is auto-calculated as sellingPrice - variant.costPrice on create and update.',
         params: variantIdParamSchema,
         body: upsertPricingSchema,
-        response: { 201: upsertPricingResponseSchema },
       },
     },
     postPricingHandler
@@ -72,7 +67,6 @@ export default async function variantRoutes(app: FastifyInstance) {
         security: [{ bearerAuth: [] }],
         params: variantIdParamSchema,
         body: adjustStockSchema,
-        response: { 200: adjustStockResponseSchema },
       },
     },
     patchStockHandler

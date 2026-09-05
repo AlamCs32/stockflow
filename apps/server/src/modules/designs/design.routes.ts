@@ -1,6 +1,6 @@
 import type { FastifyInstance } from 'fastify';
 import { postDesignHandler } from './design.controller';
-import { createDesignResponseSchema, createDesignSchema } from './design.schema';
+import { createDesignSchema } from './design.schema';
 
 export default async function designRoutes(app: FastifyInstance) {
   app.post(
@@ -12,7 +12,6 @@ export default async function designRoutes(app: FastifyInstance) {
         description:
           'Validates that the referenced supplier and category exist. Design codes are unique.',
         body: createDesignSchema,
-        response: { 201: createDesignResponseSchema },
       },
     },
     postDesignHandler

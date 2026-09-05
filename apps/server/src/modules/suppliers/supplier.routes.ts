@@ -12,7 +12,6 @@ import {
   supplierIdParamSchema,
   supplierListResponseSchema,
   updateSupplierSchema,
-  updateSupplierResponseSchema,
 } from './supplier.schema';
 
 export default async function supplierRoutes(app: FastifyInstance) {
@@ -25,7 +24,6 @@ export default async function supplierRoutes(app: FastifyInstance) {
         description:
           'Supplier code is auto-generated (S001, S002, ...) when omitted. Contact email must be unique.',
         body: createSupplierSchema,
-        response: { 201: createSupplierResponseSchema },
       },
     },
     postSupplierHandler
@@ -64,7 +62,6 @@ export default async function supplierRoutes(app: FastifyInstance) {
         summary: 'Update supplier fields',
         params: supplierIdParamSchema,
         body: updateSupplierSchema,
-        response: { 200: updateSupplierResponseSchema },
       },
     },
     updateSupplierHandler
