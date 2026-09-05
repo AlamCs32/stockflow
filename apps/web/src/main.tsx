@@ -5,16 +5,19 @@ import { RouterProvider } from 'react-router-dom';
 import { store } from '@/store';
 import { router } from '@/routes';
 import '@/index.css';
+import { ThemeProvider } from '@/components/shared/ThemeProvider';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { Toaster } from '@/components/ui/sonner';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <Provider store={store}>
-      <TooltipProvider>
-        <RouterProvider router={router} />
-        <Toaster position="top-right" richColors closeButton />
-      </TooltipProvider>
+      <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+        <TooltipProvider>
+          <RouterProvider router={router} />
+          <Toaster position="top-right" richColors closeButton />
+        </TooltipProvider>
+      </ThemeProvider>
     </Provider>
   </React.StrictMode>
 );
