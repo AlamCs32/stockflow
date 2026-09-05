@@ -17,14 +17,18 @@ export default function App() {
   }, []);
 
   return (
-    <div style={{ fontFamily: 'system-ui, sans-serif', padding: '2rem' }}>
-      <h1>{APP_NAME}</h1>
-      {error ? <p style={{ color: 'crimson' }}>Error: {error}</p> : null}
-      <ul>
+    <div className="min-h-screen bg-background p-8">
+      <h1 className="text-3xl font-bold tracking-tight">{APP_NAME}</h1>
+      {error ? (
+        <p className="mt-2 text-destructive">Error: {error}</p>
+      ) : null}
+      <ul className="mt-4 space-y-2">
         {items.map((item) => (
-          <li key={item.id}>{item.name}</li>
+          <li key={item.id} className="text-foreground">
+            {item.name}
+          </li>
         ))}
-        {!error && items.length === 0 ? <p>Loading...</p> : null}
+        {!error && items.length === 0 ? <p className="text-muted-foreground">Loading...</p> : null}
       </ul>
     </div>
   );
