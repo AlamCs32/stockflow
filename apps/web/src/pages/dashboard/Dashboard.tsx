@@ -8,7 +8,7 @@ const stats = [
   { title: 'Outward Today', value: '0', icon: BarChart3, change: '+0%' },
 ];
 
-export default function Dashboard() {
+export function Dashboard() {
   return (
     <div className="space-y-6">
       <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>

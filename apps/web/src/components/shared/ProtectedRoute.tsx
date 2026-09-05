@@ -1,7 +1,7 @@
 import { Navigate, Outlet } from 'react-router-dom';
 import { useAppSelector } from '@/store';
 
-export default function ProtectedRoute({ children }: { children: React.ReactNode }) {
+export function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const isAuthenticated = useAppSelector((state) => state.auth.isAuthenticated);
 
   if (!isAuthenticated) {

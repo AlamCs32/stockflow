@@ -15,7 +15,7 @@ const navItems = [
   { href: '/dashboard/items', label: 'Items', icon: Package },
 ];
 
-export default function Sidebar() {
+export function Sidebar() {
   const location = useLocation();
   const dispatch = useAppDispatch();
   const sidebarOpen = useAppSelector((state) => state.app.sidebarOpen);

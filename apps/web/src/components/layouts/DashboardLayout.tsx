@@ -1,9 +1,9 @@
 import { Outlet } from 'react-router-dom';
-import Sidebar from '@/components/shared/Sidebar';
-import Header from '@/components/shared/Header';
+import { Sidebar } from '@/components/shared/Sidebar';
+import { Header } from '@/components/shared/Header';
 import { useAppSelector } from '@/store';
 
-export default function DashboardLayout() {
+export function DashboardLayout() {
   const sidebarOpen = useAppSelector((state) => state.app.sidebarOpen);
 
   return (

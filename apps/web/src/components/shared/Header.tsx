@@ -4,7 +4,7 @@ import { useAppSelector } from '@/store';
 import { Badge } from '@/components/ui/badge';
 import { ThemeToggle } from '@/components/shared/ThemeToggle';
 
-export default function Header() {
+export function Header() {
   const user = useAppSelector((state) => state.auth.user);
 
   return (

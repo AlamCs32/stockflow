@@ -14,7 +14,7 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 
-export default function Login() {
+export function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();

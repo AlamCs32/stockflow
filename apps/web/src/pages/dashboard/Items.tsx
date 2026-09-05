@@ -10,7 +10,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 
-export default function Items() {
+export function Items() {
   const { data, isLoading, error } = useGetItemsQuery();
 
   if (isLoading) {
