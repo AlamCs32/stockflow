@@ -1,5 +1,5 @@
 import { AppDataSource } from '@/database/data-source';
-import { Supplier } from '@/entities/supplier.entity';
+import { Supplier, SupplierCategory, AvailabilityStatus } from '@/entities/supplier.entity';
 
 export const supplierRepository = AppDataSource.getRepository(Supplier);
 
@@ -27,6 +27,17 @@ export async function createSupplier(data: {
   code: string;
   name: string;
   contactEmail: string;
+  mobileNo: string;
+  category?: SupplierCategory;
+  trustScore?: number;
+  qualityScore?: number;
+  availabilityStatus?: AvailabilityStatus;
+  leadTimeDays?: number | null;
+  address?: string | null;
+  city?: string | null;
+  state?: string | null;
+  gstNumber?: string | null;
+  panNumber?: string | null;
 }): Promise<Supplier> {
   const supplier = supplierRepository.create(data);
   return supplierRepository.save(supplier);

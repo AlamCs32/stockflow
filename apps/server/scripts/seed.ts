@@ -1,8 +1,7 @@
 import { AppDataSource, initializeDatabase } from '../src/database/data-source';
 import { User } from '../src/entities/user.entity';
 import { Category } from '../src/entities/category.entity';
-import { Item } from '../src/entities/item.entity';
-import { Supplier } from '../src/entities/supplier.entity';
+import { Supplier, SupplierCategory, AvailabilityStatus } from '../src/entities/supplier.entity';
 import { Design } from '../src/entities/design.entity';
 import { ProductVariant } from '../src/entities/product-variant.entity';
 import { ChannelPricing, SalesChannel } from '../src/entities/channel-pricing.entity';
@@ -20,7 +19,6 @@ async function seed() {
 
   const userRepo = AppDataSource.getRepository(User);
   const categoryRepo = AppDataSource.getRepository(Category);
-  const itemRepo = AppDataSource.getRepository(Item);
   const supplierRepo = AppDataSource.getRepository(Supplier);
   const designRepo = AppDataSource.getRepository(Design);
   const variantRepo = AppDataSource.getRepository(ProductVariant);
@@ -64,25 +62,24 @@ async function seed() {
     );
   }
 
-  const electronics = await categoryRepo.save(
-    categoryRepo.create({ name: 'Electronics', code: 'ELE' })
-  );
-  const furniture = await categoryRepo.save(
-    categoryRepo.create({ name: 'Furniture', code: 'FUR' })
-  );
   const kurti = await categoryRepo.save(categoryRepo.create({ name: 'Kurti', code: 'KRT' }));
-
-  await itemRepo.save([
-    itemRepo.create({ name: 'Laptop', userId: user.id, categoryId: electronics.id }),
-    itemRepo.create({ name: 'Desk', userId: user.id, categoryId: furniture.id }),
-    itemRepo.create({ name: 'Monitor', userId: user.id, categoryId: electronics.id }),
-  ]);
 
   const supplier = await supplierRepo.save(
     supplierRepo.create({
       code: 'S001',
       name: 'Jaipur Textiles',
       contactEmail: 'sales@jaipurtextiles.in',
+      mobileNo: '9876543210',
+      category: SupplierCategory.GARMENT,
+      trustScore: 85,
+      qualityScore: 90,
+      availabilityStatus: AvailabilityStatus.ALWAYS_AVAILABLE,
+      leadTimeDays: 7,
+      address: '123 Textile Market, Pink City',
+      city: 'Jaipur',
+      state: 'Rajasthan',
+      gstNumber: '08AAACB1234F1Z5',
+      panNumber: 'AAACB1234F',
     })
   );
 
@@ -146,7 +143,7 @@ async function seed() {
   }
 
   console.log(
-    `Seed completed: 1 user, 1 admin role, ${modules.length} modules, 3 categories, 3 items, 1 supplier, 1 design, 1 variant (${sku}), 3 channel pricings`
+    `Seed completed: 1 user, 1 admin role, ${modules.length} modules, 2 categories, 1 supplier, 1 design, 1 variant (${sku}), 3 channel pricings`
   );
   await AppDataSource.destroy();
 }

@@ -9,8 +9,4 @@ export {
   useRegisterMutation,
   useGetMeQuery,
 } from './auth';
-export {
-  itemsApi,
-  useGetItemsQuery,
-  useGetItemByIdQuery,
-} from './items';
+

@@ -4,7 +4,6 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { DataSource } from 'typeorm';
 import { config } from '@stockflow/config';
-import { Item } from '../entities/item.entity';
 import { User } from '../entities/user.entity';
 import { RefreshToken } from '../entities/auth/refresh-token.entity';
 import { Role } from '../entities/auth/role.entity';
@@ -28,7 +27,6 @@ export const AppDataSource = new DataSource({
   password: config.database.password,
   database: config.database.database,
   entities: [
-    Item,
     User,
     RefreshToken,
     Role,

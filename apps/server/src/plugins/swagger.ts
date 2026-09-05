@@ -46,7 +46,6 @@ export default async function registerSwagger(app: FastifyInstance) {
         { name: 'Designs', description: 'Design catalog tied to suppliers and categories' },
         { name: 'Variants', description: 'SKU units with pricing and stock control' },
         { name: 'Inventory', description: 'Aggregated inventory views' },
-        { name: 'Items', description: 'Legacy item catalog' },
         { name: 'Uploads', description: 'File uploads' },
         { name: 'Health', description: 'Service health checks' },
       ],

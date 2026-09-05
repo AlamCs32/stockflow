@@ -8,7 +8,6 @@ import {
 } from 'typeorm';
 import { RefreshToken } from './auth/refresh-token.entity';
 import { UserRole } from './auth/user-role.entity';
-import { Item } from './item.entity';
 
 @Entity('users')
 export class User {
@@ -41,9 +40,6 @@ export class User {
 
   @OneToMany(() => UserRole, (ur) => ur.user)
   userRoles: UserRole[];
-
-  @OneToMany(() => Item, (item) => item.user)
-  items: Item[];
 
   @CreateDateColumn({ type: 'timestamptz', name: 'created_at' })
   createdAt: Date;

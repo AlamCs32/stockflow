@@ -10,6 +10,7 @@ import {
   removeSupplier,
   listSuppliers as listAllSuppliers,
 } from '@/repositories/supplier.repository';
+import type { SupplierCategory, AvailabilityStatus } from '@/entities/supplier.entity';
 
 async function generateSupplierCode(): Promise<string> {
   let sequence = (await countSuppliers()) + 1;
@@ -27,6 +28,17 @@ export async function createSupplierService(input: {
   code?: string;
   name: string;
   contactEmail: string;
+  mobileNo: string;
+  category?: SupplierCategory;
+  trustScore?: number;
+  qualityScore?: number;
+  availabilityStatus?: AvailabilityStatus;
+  leadTimeDays?: number | null;
+  address?: string | null;
+  city?: string | null;
+  state?: string | null;
+  gstNumber?: string | null;
+  panNumber?: string | null;
 }) {
   const code = input.code ?? (await generateSupplierCode());
 
@@ -44,6 +56,17 @@ export async function createSupplierService(input: {
     code,
     name: input.name,
     contactEmail: input.contactEmail,
+    mobileNo: input.mobileNo,
+    category: input.category,
+    trustScore: input.trustScore,
+    qualityScore: input.qualityScore,
+    availabilityStatus: input.availabilityStatus,
+    leadTimeDays: input.leadTimeDays,
+    address: input.address,
+    city: input.city,
+    state: input.state,
+    gstNumber: input.gstNumber,
+    panNumber: input.panNumber,
   });
 }
 
@@ -61,7 +84,21 @@ export async function getSupplierOrThrow(id: string) {
 
 export async function updateSupplier(
   id: string,
-  input: { name?: string; contactEmail?: string }
+  input: {
+    name?: string;
+    contactEmail?: string;
+    mobileNo?: string;
+    category?: SupplierCategory;
+    trustScore?: number;
+    qualityScore?: number;
+    availabilityStatus?: AvailabilityStatus;
+    leadTimeDays?: number | null;
+    address?: string | null;
+    city?: string | null;
+    state?: string | null;
+    gstNumber?: string | null;
+    panNumber?: string | null;
+  }
 ) {
   const supplier = await getSupplierOrThrow(id);
 
@@ -72,12 +109,19 @@ export async function updateSupplier(
     }
   }
 
-  if (input.name !== undefined) {
-    supplier.name = input.name;
-  }
-  if (input.contactEmail !== undefined) {
-    supplier.contactEmail = input.contactEmail;
-  }
+  if (input.name !== undefined) supplier.name = input.name;
+  if (input.contactEmail !== undefined) supplier.contactEmail = input.contactEmail;
+  if (input.mobileNo !== undefined) supplier.mobileNo = input.mobileNo;
+  if (input.category !== undefined) supplier.category = input.category;
+  if (input.trustScore !== undefined) supplier.trustScore = input.trustScore;
+  if (input.qualityScore !== undefined) supplier.qualityScore = input.qualityScore;
+  if (input.availabilityStatus !== undefined) supplier.availabilityStatus = input.availabilityStatus;
+  if (input.leadTimeDays !== undefined) supplier.leadTimeDays = input.leadTimeDays;
+  if (input.address !== undefined) supplier.address = input.address;
+  if (input.city !== undefined) supplier.city = input.city;
+  if (input.state !== undefined) supplier.state = input.state;
+  if (input.gstNumber !== undefined) supplier.gstNumber = input.gstNumber;
+  if (input.panNumber !== undefined) supplier.panNumber = input.panNumber;
 
   return saveSupplier(supplier);
 }
